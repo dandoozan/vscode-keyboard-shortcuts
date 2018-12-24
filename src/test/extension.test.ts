@@ -1,15 +1,24 @@
-//
-// Note: This example test is leveraging the Mocha test framework.
-// Please refer to their documentation on https://mochajs.org/ for help.
-//
+//note: testing options
+//  1. heavy integration tests (ie. test the commands), unit test where needed
+//      -benefits:
+//          -easier to develop (i can pass around complex objects, like Editors)
+//          -you'll know the commands work
+//      -drawbacks:
+//          -i'll have to create and open an "editor" for each test (or create a
+//          separate file in the project, or create a multiline string in code)
+//  2. heavy unit test, a few integration tests
+//      -benefits:
+//          -easier to test (i'll make the functions only take in primitive/simple
+//          types)
+//      -drawbacks:
+//          -harder to develop (i'll have to do setup in the code to avoid passing
+//          in complex objects)
 
-// The module 'assert' provides assertion methods from node
-import * as assert from 'assert';
 
-// You can import and use all API from the 'vscode' module
-// as well as import your extension to test it
-// import * as vscode from 'vscode';
-// import * as myExtension from '../extension';
+
+import assert = require("assert");
+
+
 
 // Defines a Mocha test suite to group tests of similar kind together
 describe("Extension Tests", function () {
