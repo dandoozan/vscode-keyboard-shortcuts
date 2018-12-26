@@ -10,14 +10,14 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.helloWorld"
+        "onCommand:vks.deleteInnerString"
     ],
     "main": "./out/extension.js",
     "contributes": {
         "commands": [
             {
-                "command": "extension.helloWorld",
-                "title": "Hello World"
+                "command": "vks.deleteInnerString",
+                "title": "Delete Inner String"
             }
         ]
     },
@@ -33,9 +33,15 @@
         "installVsix": "code --install-extension $npm_package_name-$npm_package_version.vsix"
     },
     "devDependencies": {
-        "typescript": "^3.1.4",
-        "vscode": "^1.1.25",
+        "@types/lodash": "^4.14.119",
+        "@types/mocha": "^2.2.42",
         "@types/node": "^8.10.25",
-        "@types/mocha": "^2.2.42"
+        "typescript": "^3.1.4",
+        "vscode": "^1.1.25"
+    },
+    "dependencies": {
+        "@babel/parser": "^7.2.3",
+        "@babel/types": "^7.2.2",
+        "lodash": "^4.17.11"
     }
 }

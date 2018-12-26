@@ -1,29 +1,59 @@
 import { ExtensionContext } from 'vscode';
-import { addCommand, getCurrentEditor } from './utils';
+import {
+    generateAst,
+    getCurrentEditor,
+    getTextOfFile,
+    getLanguage,
+    findEnclosingStringNode,
+    getCursorLocation,
+    addCommand,
+    deleteBetween,
+    getNodeBoundaries,
+} from './utils';
+import { Node } from '@babel/types';
 
+function getInnerStringBoundaries(stringNode: Node | undefined) {
+    const nodeBoundaries = getNodeBoundaries(stringNode);
+    if (nodeBoundaries) {
+        return {
+            start: nodeBoundaries.start + 1,
+            end: nodeBoundaries.end - 1
+        };
+    }
+}
 
+async function deleteInnerString() {
+    const currentEditor = getCurrentEditor();
 
-function cutString() {
-	const currentEditor = getCurrentEditor();
+    if (currentEditor) {
+        const ast = generateAst(
+            getTextOfFile(currentEditor),
+            getLanguage(currentEditor)
+        );
 
-	if (currentEditor) {
-		const ast = generateAST(getTextOfFile(currentEditor), getLanguage(currentEditor));
+        //find the string that i'm in
+        const enclosingStringNode = findEnclosingStringNode(
+            ast,
+            getCursorLocation(currentEditor)
+        );
 
-		//find the string that i'm in
-		const enclosingStringNode = findEnclosingNodeOfType(ast, String);
-		console.log('​cutString -> enclosingStringNode=', enclosingStringNode);
+        const innerStringBoundaries = getInnerStringBoundaries(enclosingStringNode);
 
-		const innerStringOffsetRange = getInnerStringOffsetRange(enclosingStringNode);
-
-		//cut the contents
-		cut(currentEditor, innerStringOffsetRange);
-	}
+        //remove the string
+        if (innerStringBoundaries) {
+            await deleteBetween(
+                currentEditor,
+                innerStringBoundaries.start,
+                innerStringBoundaries.end
+            );
+        }
+    }
 }
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: ExtensionContext) {
-    addCommand('vks.cutString', cutString, context);
+    addCommand('vks.deleteInnerString', deleteInnerString, context);
 }
 
 // this method is called when your extension is deactivated
