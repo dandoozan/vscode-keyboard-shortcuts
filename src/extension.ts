@@ -1,51 +1,53 @@
-import { ExtensionContext } from 'vscode';
+import { ExtensionContext, TextEditor } from 'vscode';
 import {
     generateAst,
     getCurrentEditor,
     getTextOfFile,
     getLanguage,
-    findEnclosingStringNode,
     getCursorLocation,
     addCommand,
-    deleteBetween,
-    getNodeBoundaries,
+    deleteBetweenBoundary,
+    filterAst,
+    isCursorInsideNode,
+    getInnerBoundary,
 } from './utils';
-import { Node } from '@babel/types';
+import { Node, isStringLiteral, isTemplateLiteral } from '@babel/types';
 
-function getInnerStringBoundaries(stringNode: Node | undefined) {
-    const nodeBoundaries = getNodeBoundaries(stringNode);
-    if (nodeBoundaries) {
-        return {
-            start: nodeBoundaries.start + 1,
-            end: nodeBoundaries.end - 1
-        };
-    }
+
+function isString(node: Node) {
+    return isStringLiteral(node) || isTemplateLiteral(node);
+}
+
+function findEnclosingStringBoundary(
+    editor: TextEditor,
+    cursorLocation: number
+) {
+    const ast = generateAst(getTextOfFile(editor), getLanguage(editor));
+
+    //find the string that i'm in
+    const enclosingStringNode = filterAst(
+        ast,
+        (node: Node) =>
+            isString(node) && isCursorInsideNode(cursorLocation, node)
+    )[0];
+
+    const stringBoundary = getInnerBoundary(enclosingStringNode);
+
+    return stringBoundary;
 }
 
 async function deleteInnerString() {
-    const currentEditor = getCurrentEditor();
+    const editor = getCurrentEditor();
 
-    if (currentEditor) {
-        const ast = generateAst(
-            getTextOfFile(currentEditor),
-            getLanguage(currentEditor)
+    if (editor) {
+        const stringBoundary = findEnclosingStringBoundary(
+            editor,
+            getCursorLocation(editor)
         );
-
-        //find the string that i'm in
-        const enclosingStringNode = findEnclosingStringNode(
-            ast,
-            getCursorLocation(currentEditor)
-        );
-
-        const innerStringBoundaries = getInnerStringBoundaries(enclosingStringNode);
 
         //remove the string
-        if (innerStringBoundaries) {
-            await deleteBetween(
-                currentEditor,
-                innerStringBoundaries.start,
-                innerStringBoundaries.end
-            );
+        if (stringBoundary) {
+            await deleteBetweenBoundary(editor, stringBoundary);
         }
     }
 }
