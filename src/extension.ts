@@ -1,4 +1,4 @@
-import { ExtensionContext, TextEditor } from 'vscode';
+import { ExtensionContext } from 'vscode';
 import {
     generateAst,
     getCurrentEditor,
@@ -9,29 +9,18 @@ import {
     deleteBetweenBoundary,
     filterAst,
     isCursorInsideNode,
-    getInnerBoundary,
+    getBoundaryExcludingBraces,
+    isString,
 } from './utils';
-import { Node, isStringLiteral, isTemplateLiteral } from '@babel/types';
+import { Node } from '@babel/types';
 
-
-function isString(node: Node) {
-    return isStringLiteral(node) || isTemplateLiteral(node);
-}
-
-function findEnclosingStringBoundary(
-    editor: TextEditor,
-    cursorLocation: number
-) {
-    const ast = generateAst(getTextOfFile(editor), getLanguage(editor));
-
-    //find the string that i'm in
+function findEnclosingStringBoundary(ast: Node, cursorLocation: number) {
     const enclosingStringNode = filterAst(
         ast,
-        (node: Node) =>
-            isString(node) && isCursorInsideNode(cursorLocation, node)
+        node => isString(node) && isCursorInsideNode(cursorLocation, node)
     )[0];
 
-    const stringBoundary = getInnerBoundary(enclosingStringNode);
+    const stringBoundary = getBoundaryExcludingBraces(enclosingStringNode);
 
     return stringBoundary;
 }
@@ -40,14 +29,17 @@ async function deleteInnerString() {
     const editor = getCurrentEditor();
 
     if (editor) {
-        const stringBoundary = findEnclosingStringBoundary(
-            editor,
-            getCursorLocation(editor)
-        );
+        const ast = generateAst(getTextOfFile(editor), getLanguage(editor));
+        if (ast) {
+            const stringBoundary = findEnclosingStringBoundary(
+                ast,
+                getCursorLocation(editor)
+            );
 
-        //remove the string
-        if (stringBoundary) {
-            await deleteBetweenBoundary(editor, stringBoundary);
+            //remove the string
+            if (stringBoundary) {
+                await deleteBetweenBoundary(editor, stringBoundary);
+            }
         }
     }
 }

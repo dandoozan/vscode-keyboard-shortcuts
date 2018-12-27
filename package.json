@@ -18,7 +18,7 @@
         "commands": [
             {
                 "command": "vks.deleteInnerString",
-                "title": "Delete Inner String"
+                "title": "VKS: Delete Inner String"
             }
         ]
     },
