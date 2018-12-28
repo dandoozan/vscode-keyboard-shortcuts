@@ -13,14 +13,21 @@ import {
     isString,
 } from './utils';
 import { Node } from '@babel/types';
+import { maxBy } from 'lodash';
 
 function findEnclosingStringBoundary(ast: Node, cursorLocation: number) {
-    const enclosingStringNode = filterAst(
+    //there could be several enclosing strings (if, for example, there's a string
+    //expression inside a template literal (eg. `Outer string ${'Inner string'}`))
+    const enclosingStringNodes = filterAst(
         ast,
         node => isString(node) && isCursorInsideNode(cursorLocation, node)
-    )[0];
+    );
 
-    const stringBoundary = getBoundaryExcludingBraces(enclosingStringNode);
+    //so get the most enclosing one by finding the one with the last "start" value
+    const mostEnclosingStringNode = maxBy(enclosingStringNodes, 'start');
+
+    //finally, get the boundary (and exclude the " (quote symbols) around it)
+    const stringBoundary = getBoundaryExcludingBraces(mostEnclosingStringNode);
 
     return stringBoundary;
 }
