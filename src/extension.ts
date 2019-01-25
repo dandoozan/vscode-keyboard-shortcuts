@@ -1,4 +1,4 @@
-import { ExtensionContext, TextDocument } from 'vscode';
+import { ExtensionContext, TextDocument, TextEditor } from 'vscode';
 import {
     generateAst,
     getCurrentEditor,
@@ -16,9 +16,11 @@ import {
     Modification,
     makeModifications,
     Boundary,
+    paste,
 } from './utils';
 import { Node } from '@babel/types';
 import { maxBy } from 'lodash';
+
 
 function findEnclosingStringBoundary(ast: Node, cursorLocation: number) {
     let stringBoundary;
@@ -41,15 +43,8 @@ function findEnclosingStringBoundary(ast: Node, cursorLocation: number) {
     return stringBoundary;
 }
 
-export async function deleteInnerString() {
-    await applyFunctionToEnclosingStrings(createDeleteModification);
-}
-
 async function applyFunctionToEnclosingStrings(fn: Function) {
-    //"fn" must return a Modification (or nothing)
-
     const editor = getCurrentEditor();
-
     if (editor) {
         const ast = generateAst(getTextOfFile(editor), getLanguage(editor));
         if (ast) {
@@ -57,18 +52,32 @@ async function applyFunctionToEnclosingStrings(fn: Function) {
             const stringBoundaries = cursors.map(cursor =>
                 findEnclosingStringBoundary(ast, cursor)
             );
-            const modifications = stringBoundaries.map(stringBoundary =>
-                fn(editor.document, stringBoundary)
-            );
-
-            //do all the modifications
-            await makeModifications(editor, modifications);
+            await fn(editor, stringBoundaries);
         }
     }
 }
 
+export async function deleteInnerString() {
+    await applyFunctionToEnclosingStrings(
+        async (editor: TextEditor, stringBoundaries: Boundary[]) => {
+            //create a "delete" modification for each string
+            const modifications = stringBoundaries.map(stringBoundary =>
+                createDeleteModification(editor.document, stringBoundary)
+            );
+
+            //do all the modifications
+            await makeModifications(editor, modifications as Modification[]);
+        }
+    );
+}
+export async function replaceString() {
+    await deleteInnerString();
+    await paste();
+}
+
 export function activate(context: ExtensionContext) {
     addCommand('vks.deleteInnerString', deleteInnerString, context);
+    addCommand('vks.replaceString', replaceString, context);
 }
 
 export function deactivate() {}

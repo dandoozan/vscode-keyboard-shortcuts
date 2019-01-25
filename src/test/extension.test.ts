@@ -1,7 +1,7 @@
 import { equal } from 'assert';
 import { workspace, window } from 'vscode';
-import { deleteInnerString } from '../extension';
-import { setCursor } from '../utils';
+import { deleteInnerString, replaceString } from '../extension';
+import { setCursor, copyToClipboard } from '../utils';
 
 //tests i should make for findEnclosingStringBoundary:
 //"double quote string"
@@ -17,7 +17,7 @@ import { setCursor } from '../utils';
 //  -cursor not inside a string
 
 describe('deleteInnerString', () => {
-    //tests i should make for findEnclosingStringBoundary:
+    //tests to make:
     //"double quote string"
     //'single quote string'
     //`template string`
@@ -62,6 +62,7 @@ describe('deleteInnerString', () => {
         await deleteInnerString();
         equal(doc.getText(), expectedEndingCode);
     });
+
     it('should delete template string', async () => {
         const startingCode = '(`Four score and seven years ago...`)';
         const expectedEndingCode = '(``)';
@@ -79,6 +80,7 @@ describe('deleteInnerString', () => {
         await deleteInnerString();
         equal(doc.getText(), expectedEndingCode);
     });
+
     it('should delete string inside template string', async () => {
         const startingCode = '(`${"Four score and seven years ago..."}`)';
         const expectedEndingCode = '(`${""}`)';
@@ -96,6 +98,7 @@ describe('deleteInnerString', () => {
         await deleteInnerString();
         equal(doc.getText(), expectedEndingCode);
     });
+
     it('should delete directive', async () => {
         const startingCode = '"use strict"';
         const expectedEndingCode = '""';
@@ -147,6 +150,145 @@ describe('deleteInnerString', () => {
         await setCursor(editor, cursorPositions);
 
         await deleteInnerString();
+        equal(doc.getText(), expectedEndingCode);
+    });
+});
+
+
+describe('replaceString', () => {
+    //tests to make:
+    //"double quote string"
+    //'single quote string'
+    //`template string`
+    //  -with cursor inside string inside expression
+    //'use strict'
+    //other
+    //  -cursor not inside a string (what should it do? still paste?)
+    //  -multicursor
+
+    it('should replace double-quote string', async () => {
+        const clipboardContent = '87 years ago...'
+        await copyToClipboard(clipboardContent);
+
+        const startingCode = '("Four score and seven years ago...")';
+        const expectedEndingCode = `("${clipboardContent}")`;
+        const cursorPosition = 2; //<-- just inside the opening quote
+
+        const doc = await workspace.openTextDocument({
+            content: startingCode,
+            language: 'javascript',
+        });
+
+        //show it so that it's the "activeTextEditor"
+        const editor = await window.showTextDocument(doc);
+        await setCursor(editor, cursorPosition);
+
+        await replaceString();
+        equal(doc.getText(), expectedEndingCode);
+    });
+
+    it('should replace single-quote string', async () => {
+        const clipboardContent = '87 years ago...'
+        await copyToClipboard(clipboardContent);
+
+        const startingCode = "('Four score and seven years ago...')";
+        const expectedEndingCode = `('${clipboardContent}')`;
+        const cursorPosition = 2; //<-- just inside the opening quote
+
+        const doc = await workspace.openTextDocument({
+            content: startingCode,
+            language: 'javascript',
+        });
+
+        //show it so that it's the "activeTextEditor"
+        const editor = await window.showTextDocument(doc);
+        await setCursor(editor, cursorPosition);
+
+        await replaceString();
+        equal(doc.getText(), expectedEndingCode);
+    });
+
+    it('should replace template string', async () => {
+        const clipboardContent = '87 years ago...'
+        await copyToClipboard(clipboardContent);
+
+        const startingCode = '(`Four score and seven years ago...`)';
+        const expectedEndingCode = `(\`${clipboardContent}\`)`;
+        const cursorPosition = 2; //<-- just inside the opening quote
+
+        const doc = await workspace.openTextDocument({
+            content: startingCode,
+            language: 'javascript',
+        });
+
+        //show it so that it's the "activeTextEditor"
+        const editor = await window.showTextDocument(doc);
+        await setCursor(editor, cursorPosition);
+
+        await replaceString();
+        equal(doc.getText(), expectedEndingCode);
+    });
+
+    it('should replace string inside template string', async () => {
+        const clipboardContent = '87 years ago...'
+        await copyToClipboard(clipboardContent);
+
+        const startingCode = '(`${"Four score and seven years ago..."}`)';
+        const expectedEndingCode = `(\`\${"${clipboardContent}"}\`)`;
+        const cursorPosition = 5; //<-- just inside the opening quote
+
+        const doc = await workspace.openTextDocument({
+            content: startingCode,
+            language: 'javascript',
+        });
+
+        //show it so that it's the "activeTextEditor"
+        const editor = await window.showTextDocument(doc);
+        await setCursor(editor, cursorPosition);
+
+        await replaceString();
+        equal(doc.getText(), expectedEndingCode);
+    });
+
+    it('should replace directive', async () => {
+        const clipboardContent = '87 years ago...'
+        await copyToClipboard(clipboardContent);
+
+        const startingCode = '"use strict"';
+        const expectedEndingCode = `"${clipboardContent}"`;
+        const cursorPosition = 1; //<-- just inside the opening quote
+
+        const doc = await workspace.openTextDocument({
+            content: startingCode,
+            language: 'javascript',
+        });
+
+        //show it so that it's the "activeTextEditor"
+        const editor = await window.showTextDocument(doc);
+        await setCursor(editor, cursorPosition);
+
+        await replaceString();
+        equal(doc.getText(), expectedEndingCode);
+    });
+
+    it('should replace strings when multiple cursors are inside strings', async () => {
+        const clipboardContent = '87 years ago...'
+        await copyToClipboard(clipboardContent);
+
+        const startingCode = '("Four score" + "and seven years ago...")';
+        const expectedEndingCode = `("${clipboardContent}" + "${clipboardContent}")`;
+        const cursorPositions = [2, 17];
+
+        const doc = await workspace.openTextDocument({
+            content: startingCode,
+            language: 'javascript',
+        });
+
+        //show it so that it's the "activeTextEditor"
+        const editor = await window.showTextDocument(doc);
+        await setCursor(editor, cursorPositions);
+
+        await replaceString();
         equal(doc.getText(), expectedEndingCode);
     });
 });
