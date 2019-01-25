@@ -2,7 +2,7 @@
     "name": "vscode-keyboard-shortcuts",
     "displayName": "DPD VscodeKeyboardShortcuts",
     "description": "",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "publisher": "dandoozan",
     "engines": {
         "vscode": "^1.30.0"
