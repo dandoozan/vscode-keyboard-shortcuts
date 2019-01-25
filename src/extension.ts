@@ -41,7 +41,7 @@ function findEnclosingStringBoundary(ast: Node, cursorLocation: number) {
     return stringBoundary;
 }
 
-async function deleteInnerString() {
+export async function deleteInnerString() {
     await applyModificationFunctionToEnclosingStrings(createDeleteModification);
 }
 
