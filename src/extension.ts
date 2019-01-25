@@ -42,10 +42,12 @@ function findEnclosingStringBoundary(ast: Node, cursorLocation: number) {
 }
 
 export async function deleteInnerString() {
-    await applyModificationFunctionToEnclosingStrings(createDeleteModification);
+    await applyFunctionToEnclosingStrings(createDeleteModification);
 }
 
-async function applyModificationFunctionToEnclosingStrings(modificationFunction: Function) {
+async function applyFunctionToEnclosingStrings(fn: Function) {
+    //"fn" must return a Modification (or nothing)
+
     const editor = getCurrentEditor();
 
     if (editor) {
@@ -56,7 +58,7 @@ async function applyModificationFunctionToEnclosingStrings(modificationFunction:
                 findEnclosingStringBoundary(ast, cursor)
             );
             const modifications = stringBoundaries.map(stringBoundary =>
-                modificationFunction(editor.document, stringBoundary)
+                fn(editor.document, stringBoundary)
             );
 
             //do all the modifications
