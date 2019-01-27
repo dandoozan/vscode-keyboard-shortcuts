@@ -1,7 +1,7 @@
 import { equal } from 'assert';
 import { workspace, window } from 'vscode';
 import { deleteInnerString, replaceString } from '../extension';
-import { setCursor, copyToClipboard } from '../utils';
+import { setCursor, writeToClipboard } from '../utils';
 
 //tests i should make for findEnclosingStringBoundary:
 //"double quote string"
@@ -167,7 +167,7 @@ describe('replaceString', () => {
 
     it('should replace double-quote string', async () => {
         const clipboardContent = '87 years ago...';
-        await copyToClipboard(clipboardContent);
+        await writeToClipboard(clipboardContent);
 
         const startingCode = '("Four score and seven years ago...")';
         const expectedEndingCode = `("${clipboardContent}")`;
@@ -188,7 +188,7 @@ describe('replaceString', () => {
 
     it('should replace single-quote string', async () => {
         const clipboardContent = '87 years ago...';
-        await copyToClipboard(clipboardContent);
+        await writeToClipboard(clipboardContent);
 
         const startingCode = "('Four score and seven years ago...')";
         const expectedEndingCode = `('${clipboardContent}')`;
@@ -209,7 +209,7 @@ describe('replaceString', () => {
 
     it('should replace template string', async () => {
         const clipboardContent = '87 years ago...';
-        await copyToClipboard(clipboardContent);
+        await writeToClipboard(clipboardContent);
 
         const startingCode = '(`Four score and seven years ago...`)';
         const expectedEndingCode = `(\`${clipboardContent}\`)`;
@@ -230,7 +230,7 @@ describe('replaceString', () => {
 
     it('should replace string inside template string', async () => {
         const clipboardContent = '87 years ago...';
-        await copyToClipboard(clipboardContent);
+        await writeToClipboard(clipboardContent);
 
         const startingCode = '(`${"Four score and seven years ago..."}`)';
         const expectedEndingCode = `(\`\${"${clipboardContent}"}\`)`;
@@ -251,7 +251,7 @@ describe('replaceString', () => {
 
     it('should replace directive', async () => {
         const clipboardContent = '87 years ago...';
-        await copyToClipboard(clipboardContent);
+        await writeToClipboard(clipboardContent);
 
         const startingCode = '"use strict"';
         const expectedEndingCode = `"${clipboardContent}"`;
@@ -270,9 +270,30 @@ describe('replaceString', () => {
         equal(doc.getText(), expectedEndingCode);
     });
 
+    it('should NOT replace when cursor is not inside a string', async () => {
+        const clipboardContent = '87 years ago...';
+        await writeToClipboard(clipboardContent);
+
+        const startingCode = '("Four score and seven years ago...")';
+        const expectedEndingCode = `("Four score and seven years ago...")`;
+        const cursorPosition = 0;
+
+        const doc = await workspace.openTextDocument({
+            content: startingCode,
+            language: 'javascript',
+        });
+
+        //show it so that it's the "activeTextEditor"
+        const editor = await window.showTextDocument(doc);
+        await setCursor(editor, cursorPosition);
+
+        await replaceString(editor);
+        equal(doc.getText(), expectedEndingCode);
+    });
+
     it('should replace strings when multiple cursors are inside strings', async () => {
         const clipboardContent = '87 years ago...';
-        await copyToClipboard(clipboardContent);
+        await writeToClipboard(clipboardContent);
 
         const startingCode = '("Four score" + "and seven years ago...")';
         const expectedEndingCode = `("${clipboardContent}" + "${clipboardContent}")`;

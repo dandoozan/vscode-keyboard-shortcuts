@@ -23,6 +23,8 @@ import {
     Boundary,
     paste,
     addTextEditorCommand,
+    readFromClipboard,
+    createReplaceModification,
 } from './utils';
 import { Node } from '@babel/types';
 import { maxBy } from 'lodash';
@@ -48,37 +50,41 @@ function findEnclosingStringBoundary(ast: Node, cursorLocation: number) {
     return stringBoundary;
 }
 
-async function applyFunctionToEnclosingStrings(
-    editor: TextEditor,
-    fn: Function
-) {
+function getEnclosingStringBoundaries(editor: TextEditor) {
+    let stringBoundaries: Boundary[] = [];
+
     const ast = generateAst(getTextOfFile(editor), getLanguage(editor));
     if (ast) {
         const cursors = getCursors(editor);
-        const stringBoundaries = cursors.map(cursor =>
-            findEnclosingStringBoundary(ast, cursor)
-        );
-        await fn(stringBoundaries);
+        stringBoundaries = cursors
+            .map(cursor => findEnclosingStringBoundary(ast, cursor))
+            .filter(item => item); //filter out the undefineds (an item is undefined when a cursor is not in a string)
     }
+
+    return stringBoundaries;
 }
 
 export async function deleteInnerString(editor: TextEditor) {
-    await applyFunctionToEnclosingStrings(
-        editor,
-        async (stringBoundaries: Boundary[]) => {
-            //create a "delete" modification for each string
-            const modifications = stringBoundaries.map(stringBoundary =>
-                createDeleteModification(editor.document, stringBoundary)
-            );
+    const enclosingStringBoundaries = getEnclosingStringBoundaries(editor);
 
-            //do all the modifications
-            await makeModifications(editor, modifications as Modification[]);
-        }
+    //create a "delete" modification for each string
+    const modifications = enclosingStringBoundaries.map(stringBoundary =>
+        createDeleteModification(editor.document, stringBoundary)
     );
+
+    //do all the modifications
+    await makeModifications(editor, modifications as Modification[]);
 }
 export async function replaceString(editor: TextEditor) {
-    await deleteInnerString(editor);
-    await paste();
+    const enclosingStringBoundaries = getEnclosingStringBoundaries(editor);
+
+    //create a "replace" modification for each string
+    const modifications = enclosingStringBoundaries.map(stringBoundary =>
+        createReplaceModification(editor.document, stringBoundary, readFromClipboard())
+    );
+
+    //do all the modifications
+    await makeModifications(editor, modifications as Modification[]);
 }
 
 export function activate(context: ExtensionContext) {
