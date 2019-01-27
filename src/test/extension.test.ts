@@ -4,9 +4,7 @@ import { deleteInnerString, replaceString } from '../extension';
 import { setCursor, writeToClipboard } from '../utils';
 
 //tests i should make for findEnclosingStringBoundary:
-//"double quote string"
-//  -begin, middle, end
-//'single quote string'
+//"regular string"
 //  -begin, middle, end
 //`template string`
 //  -begin, middle, end
@@ -18,8 +16,7 @@ import { setCursor, writeToClipboard } from '../utils';
 
 describe('deleteInnerString', () => {
     //tests to make:
-    //"double quote string"
-    //'single quote string'
+    //"regular string"
     //`template string`
     //  -with cursor inside string inside expression
     //'use strict'
@@ -30,24 +27,6 @@ describe('deleteInnerString', () => {
     it('should delete double-quote string', async () => {
         const startingCode = '("Four score and seven years ago...")';
         const expectedEndingCode = '("")';
-        const cursorPosition = 2; //<-- just inside the opening quote
-
-        const doc = await workspace.openTextDocument({
-            content: startingCode,
-            language: 'javascript',
-        });
-
-        //show it so that it's the "activeTextEditor"
-        const editor = await window.showTextDocument(doc);
-        await setCursor(editor, cursorPosition);
-
-        await deleteInnerString(editor);
-        equal(doc.getText(), expectedEndingCode);
-    });
-
-    it('should delete single-quote string', async () => {
-        const startingCode = "('Four score and seven years ago...')";
-        const expectedEndingCode = "('')";
         const cursorPosition = 2; //<-- just inside the opening quote
 
         const doc = await workspace.openTextDocument({
@@ -156,8 +135,7 @@ describe('deleteInnerString', () => {
 
 describe('replaceString', () => {
     //tests to make:
-    //"double quote string"
-    //'single quote string'
+    //"regular string"
     //`template string`
     //  -with cursor inside string inside expression
     //'use strict'
@@ -171,27 +149,6 @@ describe('replaceString', () => {
 
         const startingCode = '("Four score and seven years ago...")';
         const expectedEndingCode = `("${clipboardContent}")`;
-        const cursorPosition = 2; //<-- just inside the opening quote
-
-        const doc = await workspace.openTextDocument({
-            content: startingCode,
-            language: 'javascript',
-        });
-
-        //show it so that it's the "activeTextEditor"
-        const editor = await window.showTextDocument(doc);
-        await setCursor(editor, cursorPosition);
-
-        await replaceString(editor);
-        equal(doc.getText(), expectedEndingCode);
-    });
-
-    it('should replace single-quote string', async () => {
-        const clipboardContent = '87 years ago...';
-        await writeToClipboard(clipboardContent);
-
-        const startingCode = "('Four score and seven years ago...')";
-        const expectedEndingCode = `('${clipboardContent}')`;
         const cursorPosition = 2; //<-- just inside the opening quote
 
         const doc = await workspace.openTextDocument({
