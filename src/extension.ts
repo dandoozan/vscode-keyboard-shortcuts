@@ -88,8 +88,9 @@ async function deleteInnerStringActionFunction(
 
 export async function executeCommand(
     editor: TextEditor,
-    commandConfig: Command
+    command: string
 ) {
+    const commandObj = commandConfig[command];
     const ast = generateAst(getTextOfFile(editor), getLanguage(editor));
     if (ast) {
         const cursors = getCursors(editor);
@@ -100,7 +101,7 @@ export async function executeCommand(
                 const enclosingNodes = filterAst(
                     ast,
                     cursor,
-                    commandConfig.filterFunction
+                    commandObj.filterFunction
                 );
 
                 if (enclosingNodes.length > 0) {
@@ -111,7 +112,7 @@ export async function executeCommand(
             })
             .filter(item => item); //filter out the undefined ones (an item is undefined when a cursor is outside the item)
 
-        await commandConfig.actionFunction(editor, boundaries);
+        await commandObj.actionFunction(editor, boundaries);
     }
 }
 
@@ -122,7 +123,7 @@ export function activate(context: ExtensionContext) {
                 `vks.${commandName}`,
                 executeCommand,
                 context,
-                commandConfig[commandName]
+                commandName
             );
         }
     }
