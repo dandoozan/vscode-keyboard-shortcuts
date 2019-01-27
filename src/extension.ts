@@ -25,71 +25,107 @@ import {
     addTextEditorCommand,
     readFromClipboard,
     createReplaceModification,
+    getBoundary,
+    excludeBracesFromBoundary,
 } from './utils';
 import { Node } from '@babel/types';
 import { maxBy } from 'lodash';
 
-function findEnclosingStringBoundary(ast: Node, cursorLocation: number) {
-    let stringBoundary;
-
-    //there could be several enclosing strings (if, for example, there's a string
-    //expression inside a template literal (eg. `Outer string ${'Inner string'}`))
-    const enclosingStringNodes = filterAst(
-        ast,
-        node => isString(node) && isCursorInsideNode(cursorLocation, node)
-    );
-
-    if (enclosingStringNodes.length > 0) {
-        //so get the most enclosing one by finding the one with the last "start" value
-        const mostEnclosingStringNode = maxBy(enclosingStringNodes, 'start');
-
-        //finally, get the boundary (and exclude the " (quote symbols) around it)
-        stringBoundary = getBoundaryExcludingBraces(mostEnclosingStringNode);
-    }
-
-    return stringBoundary;
+export interface Command {
+    filterFunction: Function;
+    actionFunction: Function;
 }
 
-function getEnclosingStringBoundaries(editor: TextEditor) {
-    let stringBoundaries: Boundary[] = [];
+export const commandConfig = {
+    deleteInnerString: {
+        filterFunction: stringFilterFunction,
+        actionFunction: deleteInnerStringActionFunction,
+        //maybe add: excludeBoundaries; modificationFunction
+    },
+    replaceString: {
+        filterFunction: stringFilterFunction,
+        actionFunction: replaceStringActionFunction,
+    },
+};
 
+function stringFilterFunction(node: Node, cursor: number) {
+    return isString(node) && isCursorInsideNode(cursor, node);
+}
+async function replaceStringActionFunction(
+    editor: TextEditor,
+    boundaries: Boundary[]
+) {
+    //first, remove the quote symbols (so that I only replace the inner string)
+    const boundariesWithoutBraces = boundaries.map(excludeBracesFromBoundary);
+
+    //create a "replace" modification for each string
+    const modifications = boundariesWithoutBraces.map(boundary =>
+        createReplaceModification(
+            editor.document,
+            boundary,
+            readFromClipboard()
+        )
+    );
+
+    //do all the modifications
+    await makeModifications(editor, modifications as Modification[]);
+}
+async function deleteInnerStringActionFunction(
+    editor: TextEditor,
+    boundaries: Boundary[]
+) {
+    //first, remove the quote symbols (so that I only delete the inner string)
+    const boundariesWithoutBraces = boundaries.map(excludeBracesFromBoundary);
+
+    //create a "delete" modification for each string
+    const modifications = boundariesWithoutBraces.map(boundary =>
+        createDeleteModification(editor.document, boundary)
+    );
+
+    //do all the modifications
+    await makeModifications(editor, modifications as Modification[]);
+}
+
+export async function executeCommand(
+    editor: TextEditor,
+    commandConfig: Command
+) {
     const ast = generateAst(getTextOfFile(editor), getLanguage(editor));
     if (ast) {
         const cursors = getCursors(editor);
-        stringBoundaries = cursors
-            .map(cursor => findEnclosingStringBoundary(ast, cursor))
-            .filter(item => item); //filter out the undefineds (an item is undefined when a cursor is not in a string)
+
+        //map the cursors to boundaries
+        const boundaries = cursors
+            .map(cursor => {
+                const enclosingNodes = filterAst(
+                    ast,
+                    cursor,
+                    commandConfig.filterFunction
+                );
+
+                if (enclosingNodes.length > 0) {
+                    //get the most enclosing one by finding the one with the last "start" value
+                    const mostEnclosingNode = maxBy(enclosingNodes, 'start');
+                    return getBoundary(mostEnclosingNode);
+                }
+            })
+            .filter(item => item); //filter out the undefined ones (an item is undefined when a cursor is outside the item)
+
+        await commandConfig.actionFunction(editor, boundaries);
     }
-
-    return stringBoundaries;
-}
-
-export async function deleteInnerString(editor: TextEditor) {
-    const enclosingStringBoundaries = getEnclosingStringBoundaries(editor);
-
-    //create a "delete" modification for each string
-    const modifications = enclosingStringBoundaries.map(stringBoundary =>
-        createDeleteModification(editor.document, stringBoundary)
-    );
-
-    //do all the modifications
-    await makeModifications(editor, modifications as Modification[]);
-}
-export async function replaceString(editor: TextEditor) {
-    const enclosingStringBoundaries = getEnclosingStringBoundaries(editor);
-
-    //create a "replace" modification for each string
-    const modifications = enclosingStringBoundaries.map(stringBoundary =>
-        createReplaceModification(editor.document, stringBoundary, readFromClipboard())
-    );
-
-    //do all the modifications
-    await makeModifications(editor, modifications as Modification[]);
 }
 
 export function activate(context: ExtensionContext) {
-    addTextEditorCommand('vks.deleteInnerString', deleteInnerString, context);
-    addTextEditorCommand('vks.replaceString', replaceString, context);
+    for (const commandName in commandConfig) {
+        if (commandConfig.hasOwnProperty(commandName)) {
+            addTextEditorCommand(
+                `vks.${commandName}`,
+                executeCommand,
+                context,
+                commandConfig[commandName]
+            );
+        }
+    }
 }
 
 export function deactivate() {}

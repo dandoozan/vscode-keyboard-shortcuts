@@ -1,6 +1,6 @@
 import { equal } from 'assert';
-import { workspace, window } from 'vscode';
-import { deleteInnerString, replaceString } from '../extension';
+import { workspace, window, commands } from 'vscode';
+import { commandConfig, executeCommand } from '../extension';
 import { setCursor, writeToClipboard } from '../utils';
 
 //tests i should make for findEnclosingStringBoundary:
@@ -38,7 +38,7 @@ describe('deleteInnerString', () => {
         const editor = await window.showTextDocument(doc);
         await setCursor(editor, cursorPosition);
 
-        await deleteInnerString(editor);
+        await executeCommand(editor, commandConfig.deleteInnerString);
         equal(doc.getText(), expectedEndingCode);
     });
 
@@ -56,7 +56,7 @@ describe('deleteInnerString', () => {
         const editor = await window.showTextDocument(doc);
         await setCursor(editor, cursorPosition);
 
-        await deleteInnerString(editor);
+        await executeCommand(editor, commandConfig.deleteInnerString);
         equal(doc.getText(), expectedEndingCode);
     });
 
@@ -74,7 +74,7 @@ describe('deleteInnerString', () => {
         const editor = await window.showTextDocument(doc);
         await setCursor(editor, cursorPosition);
 
-        await deleteInnerString(editor);
+        await executeCommand(editor, commandConfig.deleteInnerString);
         equal(doc.getText(), expectedEndingCode);
     });
 
@@ -92,7 +92,7 @@ describe('deleteInnerString', () => {
         const editor = await window.showTextDocument(doc);
         await setCursor(editor, cursorPosition);
 
-        await deleteInnerString(editor);
+        await executeCommand(editor, commandConfig.deleteInnerString);
         equal(doc.getText(), expectedEndingCode);
     });
 
@@ -110,7 +110,7 @@ describe('deleteInnerString', () => {
         const editor = await window.showTextDocument(doc);
         await setCursor(editor, cursorPosition);
 
-        await deleteInnerString(editor);
+        await executeCommand(editor, commandConfig.deleteInnerString);
         equal(doc.getText(), expectedEndingCode);
     });
 
@@ -128,7 +128,7 @@ describe('deleteInnerString', () => {
         const editor = await window.showTextDocument(doc);
         await setCursor(editor, cursorPositions);
 
-        await deleteInnerString(editor);
+        await executeCommand(editor, commandConfig.deleteInnerString);
         equal(doc.getText(), expectedEndingCode);
     });
 });
@@ -160,7 +160,7 @@ describe('replaceString', () => {
         const editor = await window.showTextDocument(doc);
         await setCursor(editor, cursorPosition);
 
-        await replaceString(editor);
+        await executeCommand(editor, commandConfig.replaceString);
         equal(doc.getText(), expectedEndingCode);
     });
 
@@ -181,7 +181,7 @@ describe('replaceString', () => {
         const editor = await window.showTextDocument(doc);
         await setCursor(editor, cursorPosition);
 
-        await replaceString(editor);
+        await executeCommand(editor, commandConfig.replaceString);
         equal(doc.getText(), expectedEndingCode);
     });
 
@@ -202,7 +202,7 @@ describe('replaceString', () => {
         const editor = await window.showTextDocument(doc);
         await setCursor(editor, cursorPosition);
 
-        await replaceString(editor);
+        await executeCommand(editor, commandConfig.replaceString);
         equal(doc.getText(), expectedEndingCode);
     });
 
@@ -223,7 +223,7 @@ describe('replaceString', () => {
         const editor = await window.showTextDocument(doc);
         await setCursor(editor, cursorPosition);
 
-        await replaceString(editor);
+        await executeCommand(editor, commandConfig.replaceString);
         equal(doc.getText(), expectedEndingCode);
     });
 
@@ -244,7 +244,7 @@ describe('replaceString', () => {
         const editor = await window.showTextDocument(doc);
         await setCursor(editor, cursorPosition);
 
-        await replaceString(editor);
+        await executeCommand(editor, commandConfig.replaceString);
         equal(doc.getText(), expectedEndingCode);
     });
 
@@ -265,7 +265,7 @@ describe('replaceString', () => {
         const editor = await window.showTextDocument(doc);
         await setCursor(editor, cursorPositions);
 
-        await replaceString(editor);
+        await executeCommand(editor, commandConfig.replaceString);
         equal(doc.getText(), expectedEndingCode);
     });
 });
