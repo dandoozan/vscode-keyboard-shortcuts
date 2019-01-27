@@ -41,7 +41,7 @@ describe('deleteInnerString', () => {
         const editor = await window.showTextDocument(doc);
         await setCursor(editor, cursorPosition);
 
-        await deleteInnerString();
+        await deleteInnerString(editor);
         equal(doc.getText(), expectedEndingCode);
     });
 
@@ -59,7 +59,7 @@ describe('deleteInnerString', () => {
         const editor = await window.showTextDocument(doc);
         await setCursor(editor, cursorPosition);
 
-        await deleteInnerString();
+        await deleteInnerString(editor);
         equal(doc.getText(), expectedEndingCode);
     });
 
@@ -77,7 +77,7 @@ describe('deleteInnerString', () => {
         const editor = await window.showTextDocument(doc);
         await setCursor(editor, cursorPosition);
 
-        await deleteInnerString();
+        await deleteInnerString(editor);
         equal(doc.getText(), expectedEndingCode);
     });
 
@@ -95,7 +95,7 @@ describe('deleteInnerString', () => {
         const editor = await window.showTextDocument(doc);
         await setCursor(editor, cursorPosition);
 
-        await deleteInnerString();
+        await deleteInnerString(editor);
         equal(doc.getText(), expectedEndingCode);
     });
 
@@ -113,7 +113,7 @@ describe('deleteInnerString', () => {
         const editor = await window.showTextDocument(doc);
         await setCursor(editor, cursorPosition);
 
-        await deleteInnerString();
+        await deleteInnerString(editor);
         equal(doc.getText(), expectedEndingCode);
     });
 
@@ -131,7 +131,7 @@ describe('deleteInnerString', () => {
         const editor = await window.showTextDocument(doc);
         await setCursor(editor, cursorPosition);
 
-        await deleteInnerString();
+        await deleteInnerString(editor);
         equal(doc.getText(), expectedEndingCode);
     });
 
@@ -149,11 +149,10 @@ describe('deleteInnerString', () => {
         const editor = await window.showTextDocument(doc);
         await setCursor(editor, cursorPositions);
 
-        await deleteInnerString();
+        await deleteInnerString(editor);
         equal(doc.getText(), expectedEndingCode);
     });
 });
-
 
 describe('replaceString', () => {
     //tests to make:
@@ -167,7 +166,7 @@ describe('replaceString', () => {
     //  -multicursor
 
     it('should replace double-quote string', async () => {
-        const clipboardContent = '87 years ago...'
+        const clipboardContent = '87 years ago...';
         await copyToClipboard(clipboardContent);
 
         const startingCode = '("Four score and seven years ago...")';
@@ -183,12 +182,12 @@ describe('replaceString', () => {
         const editor = await window.showTextDocument(doc);
         await setCursor(editor, cursorPosition);
 
-        await replaceString();
+        await replaceString(editor);
         equal(doc.getText(), expectedEndingCode);
     });
 
     it('should replace single-quote string', async () => {
-        const clipboardContent = '87 years ago...'
+        const clipboardContent = '87 years ago...';
         await copyToClipboard(clipboardContent);
 
         const startingCode = "('Four score and seven years ago...')";
@@ -204,12 +203,12 @@ describe('replaceString', () => {
         const editor = await window.showTextDocument(doc);
         await setCursor(editor, cursorPosition);
 
-        await replaceString();
+        await replaceString(editor);
         equal(doc.getText(), expectedEndingCode);
     });
 
     it('should replace template string', async () => {
-        const clipboardContent = '87 years ago...'
+        const clipboardContent = '87 years ago...';
         await copyToClipboard(clipboardContent);
 
         const startingCode = '(`Four score and seven years ago...`)';
@@ -225,12 +224,12 @@ describe('replaceString', () => {
         const editor = await window.showTextDocument(doc);
         await setCursor(editor, cursorPosition);
 
-        await replaceString();
+        await replaceString(editor);
         equal(doc.getText(), expectedEndingCode);
     });
 
     it('should replace string inside template string', async () => {
-        const clipboardContent = '87 years ago...'
+        const clipboardContent = '87 years ago...';
         await copyToClipboard(clipboardContent);
 
         const startingCode = '(`${"Four score and seven years ago..."}`)';
@@ -246,12 +245,12 @@ describe('replaceString', () => {
         const editor = await window.showTextDocument(doc);
         await setCursor(editor, cursorPosition);
 
-        await replaceString();
+        await replaceString(editor);
         equal(doc.getText(), expectedEndingCode);
     });
 
     it('should replace directive', async () => {
-        const clipboardContent = '87 years ago...'
+        const clipboardContent = '87 years ago...';
         await copyToClipboard(clipboardContent);
 
         const startingCode = '"use strict"';
@@ -267,12 +266,12 @@ describe('replaceString', () => {
         const editor = await window.showTextDocument(doc);
         await setCursor(editor, cursorPosition);
 
-        await replaceString();
+        await replaceString(editor);
         equal(doc.getText(), expectedEndingCode);
     });
 
     it('should replace strings when multiple cursors are inside strings', async () => {
-        const clipboardContent = '87 years ago...'
+        const clipboardContent = '87 years ago...';
         await copyToClipboard(clipboardContent);
 
         const startingCode = '("Four score" + "and seven years ago...")';
@@ -288,7 +287,7 @@ describe('replaceString', () => {
         const editor = await window.showTextDocument(doc);
         await setCursor(editor, cursorPositions);
 
-        await replaceString();
+        await replaceString(editor);
         equal(doc.getText(), expectedEndingCode);
     });
 });

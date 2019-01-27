@@ -1,4 +1,9 @@
-import { ExtensionContext, TextDocument, TextEditor } from 'vscode';
+import {
+    ExtensionContext,
+    TextDocument,
+    TextEditor,
+    TextEditorEdit,
+} from 'vscode';
 import {
     generateAst,
     getCurrentEditor,
@@ -17,10 +22,10 @@ import {
     makeModifications,
     Boundary,
     paste,
+    addTextEditorCommand,
 } from './utils';
 import { Node } from '@babel/types';
 import { maxBy } from 'lodash';
-
 
 function findEnclosingStringBoundary(ast: Node, cursorLocation: number) {
     let stringBoundary;
@@ -43,23 +48,24 @@ function findEnclosingStringBoundary(ast: Node, cursorLocation: number) {
     return stringBoundary;
 }
 
-async function applyFunctionToEnclosingStrings(fn: Function) {
-    const editor = getCurrentEditor();
-    if (editor) {
-        const ast = generateAst(getTextOfFile(editor), getLanguage(editor));
-        if (ast) {
-            const cursors = getCursors(editor);
-            const stringBoundaries = cursors.map(cursor =>
-                findEnclosingStringBoundary(ast, cursor)
-            );
-            await fn(editor, stringBoundaries);
-        }
+async function applyFunctionToEnclosingStrings(
+    editor: TextEditor,
+    fn: Function
+) {
+    const ast = generateAst(getTextOfFile(editor), getLanguage(editor));
+    if (ast) {
+        const cursors = getCursors(editor);
+        const stringBoundaries = cursors.map(cursor =>
+            findEnclosingStringBoundary(ast, cursor)
+        );
+        await fn(stringBoundaries);
     }
 }
 
-export async function deleteInnerString() {
+export async function deleteInnerString(editor: TextEditor) {
     await applyFunctionToEnclosingStrings(
-        async (editor: TextEditor, stringBoundaries: Boundary[]) => {
+        editor,
+        async (stringBoundaries: Boundary[]) => {
             //create a "delete" modification for each string
             const modifications = stringBoundaries.map(stringBoundary =>
                 createDeleteModification(editor.document, stringBoundary)
@@ -70,14 +76,14 @@ export async function deleteInnerString() {
         }
     );
 }
-export async function replaceString() {
-    await deleteInnerString();
+export async function replaceString(editor: TextEditor) {
+    await deleteInnerString(editor);
     await paste();
 }
 
 export function activate(context: ExtensionContext) {
-    addCommand('vks.deleteInnerString', deleteInnerString, context);
-    addCommand('vks.replaceString', replaceString, context);
+    addTextEditorCommand('vks.deleteInnerString', deleteInnerString, context);
+    addTextEditorCommand('vks.replaceString', replaceString, context);
 }
 
 export function deactivate() {}
