@@ -11,24 +11,34 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:vks.deleteInnerString",
-        "onCommand:vks.replaceString",
-        "onCommand:vks.selectString"
+        "onCommand:vks.selectString",
+        "onCommand:vks.deleteString",
+        "onCommand:vks.cutString",
+        "onCommand:vks.copyString",
+        "onCommand:vks.replaceString"
     ],
     "main": "./out/extension.js",
     "contributes": {
         "commands": [
             {
-                "command": "vks.deleteInnerString",
-                "title": "VKS: Delete Inner String"
+                "command": "vks.selectString",
+                "title": "VKS: Select String"
+            },
+            {
+                "command": "vks.deleteString",
+                "title": "VKS: Delete String"
+            },
+            {
+                "command": "vks.cutString",
+                "title": "VKS: Cut String"
+            },
+            {
+                "command": "vks.copyString",
+                "title": "VKS: Copy String"
             },
             {
                 "command": "vks.replaceString",
                 "title": "VKS: Replace String"
-            },
-            {
-                "command": "vks.selectString",
-                "title": "VKS: Select String"
             }
         ]
     },

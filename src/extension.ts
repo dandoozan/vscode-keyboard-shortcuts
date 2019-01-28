@@ -29,6 +29,7 @@ import {
     getBoundary,
     excludeBracesFromBoundary,
     createSelectionFromBoundary,
+    copy,
 } from './utils';
 import { Node } from '@babel/types';
 import { maxBy } from 'lodash';
@@ -39,23 +40,79 @@ export interface Command {
 }
 
 export const commandConfig = {
-    deleteInnerString: {
+    selectString: {
         filterFunction: stringFilterFunction,
-        actionFunction: deleteInnerStringActionFunction,
+        actionFunction: selectStringActionFunction,
+    },
+    deleteString: {
+        filterFunction: stringFilterFunction,
+        actionFunction: deleteStringActionFunction,
         //maybe add: excludeBoundaries; modificationFunction
+    },
+    cutString: {
+        filterFunction: stringFilterFunction,
+        actionFunction: cutStringActionFunction,
+    },
+    copyString: {
+        filterFunction: stringFilterFunction,
+        actionFunction: copyStringActionFunction,
     },
     replaceString: {
         filterFunction: stringFilterFunction,
         actionFunction: replaceStringActionFunction,
     },
-    selectString: {
-        filterFunction: stringFilterFunction,
-        actionFunction: selectStringActionFunction,
-    },
 };
 
 function stringFilterFunction(node: Node, cursor: number) {
     return isString(node) && isCursorInsideNode(cursor, node);
+}
+
+
+async function selectStringActionFunction(
+    editor: TextEditor,
+    boundaries: Boundary[]
+) {
+    //first, remove the quote symbols (so that I only delete the inner string)
+    const boundariesWithoutBraces = boundaries.map(excludeBracesFromBoundary);
+
+    editor.selections = boundariesWithoutBraces.map(boundary =>
+        createSelectionFromBoundary(editor.document, boundary)
+    );
+}
+async function deleteStringActionFunction(
+    editor: TextEditor,
+    boundaries: Boundary[]
+) {
+    //first, remove the quote symbols (so that I only delete the inner string)
+    const boundariesWithoutBraces = boundaries.map(excludeBracesFromBoundary);
+
+    //create a "delete" modification for each string
+    const modifications = boundariesWithoutBraces.map(boundary =>
+        createDeleteModification(editor.document, boundary)
+    );
+
+    //do all the modifications
+    await makeModifications(editor, modifications as Modification[]);
+}
+async function cutStringActionFunction(
+    editor: TextEditor,
+    boundaries: Boundary[]
+) {
+    //first, copy the strings
+    await commandConfig.copyString.actionFunction(editor, boundaries);
+
+    //then delete the strings
+    await commandConfig.deleteString.actionFunction(editor, boundaries);
+}
+async function copyStringActionFunction(
+    editor: TextEditor,
+    boundaries: Boundary[]
+) {
+    //first, select the strings
+    await commandConfig.selectString.actionFunction(editor, boundaries);
+
+    //then execute the copy command
+    await copy();
 }
 async function replaceStringActionFunction(
     editor: TextEditor,
@@ -76,37 +133,8 @@ async function replaceStringActionFunction(
     //do all the modifications
     await makeModifications(editor, modifications as Modification[]);
 }
-async function deleteInnerStringActionFunction(
-    editor: TextEditor,
-    boundaries: Boundary[]
-) {
-    //first, remove the quote symbols (so that I only delete the inner string)
-    const boundariesWithoutBraces = boundaries.map(excludeBracesFromBoundary);
 
-    //create a "delete" modification for each string
-    const modifications = boundariesWithoutBraces.map(boundary =>
-        createDeleteModification(editor.document, boundary)
-    );
-
-    //do all the modifications
-    await makeModifications(editor, modifications as Modification[]);
-}
-
-async function selectStringActionFunction(
-    editor: TextEditor,
-    boundaries: Boundary[]
-) {
-    //first, remove the quote symbols (so that I only delete the inner string)
-    const boundariesWithoutBraces = boundaries.map(excludeBracesFromBoundary);
-
-    editor.selections = boundariesWithoutBraces.map(boundary =>
-        createSelectionFromBoundary(editor.document, boundary)
-    );
-}
-
-export async function executeCommand(
-    editor: TextEditor,
-) {
+export async function executeCommand(editor: TextEditor) {
     //@ts-ignore (i'm ts-ignoring the line below because it complained about the "this")
     const commandName = this.commandName;
 
