@@ -12,7 +12,8 @@
     ],
     "activationEvents": [
         "onCommand:vks.deleteInnerString",
-        "onCommand:vks.replaceString"
+        "onCommand:vks.replaceString",
+        "onCommand:vks.selectString"
     ],
     "main": "./out/extension.js",
     "contributes": {
@@ -24,6 +25,10 @@
             {
                 "command": "vks.replaceString",
                 "title": "VKS: Replace String"
+            },
+            {
+                "command": "vks.selectString",
+                "title": "VKS: Select String"
             }
         ]
     },

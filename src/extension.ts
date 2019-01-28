@@ -3,6 +3,7 @@ import {
     TextDocument,
     TextEditor,
     TextEditorEdit,
+    Selection,
 } from 'vscode';
 import {
     generateAst,
@@ -27,6 +28,7 @@ import {
     createReplaceModification,
     getBoundary,
     excludeBracesFromBoundary,
+    createSelectionFromBoundary,
 } from './utils';
 import { Node } from '@babel/types';
 import { maxBy } from 'lodash';
@@ -45,6 +47,10 @@ export const commandConfig = {
     replaceString: {
         filterFunction: stringFilterFunction,
         actionFunction: replaceStringActionFunction,
+    },
+    selectString: {
+        filterFunction: stringFilterFunction,
+        actionFunction: selectStringActionFunction,
     },
 };
 
@@ -86,11 +92,25 @@ async function deleteInnerStringActionFunction(
     await makeModifications(editor, modifications as Modification[]);
 }
 
+async function selectStringActionFunction(
+    editor: TextEditor,
+    boundaries: Boundary[]
+) {
+    //first, remove the quote symbols (so that I only delete the inner string)
+    const boundariesWithoutBraces = boundaries.map(excludeBracesFromBoundary);
+
+    editor.selections = boundariesWithoutBraces.map(boundary =>
+        createSelectionFromBoundary(editor.document, boundary)
+    );
+}
+
 export async function executeCommand(
     editor: TextEditor,
-    command: string
 ) {
-    const commandObj = commandConfig[command];
+    //@ts-ignore (i'm ts-ignoring the line below because it complained about the "this")
+    const commandName = this.commandName;
+
+    const commandObj = commandConfig[commandName];
     const ast = generateAst(getTextOfFile(editor), getLanguage(editor));
     if (ast) {
         const cursors = getCursors(editor);
@@ -123,7 +143,7 @@ export function activate(context: ExtensionContext) {
                 `vks.${commandName}`,
                 executeCommand,
                 context,
-                commandName
+                { commandName }
             );
         }
     }

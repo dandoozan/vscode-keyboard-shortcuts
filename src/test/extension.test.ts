@@ -18,7 +18,7 @@ async function runCommandInEditor(
     startingCode: string,
     endingCode: string,
     cursorPosition: number | number[],
-    command: string
+    commandName: string
 ) {
     const doc = await workspace.openTextDocument({
         content: startingCode,
@@ -29,7 +29,7 @@ async function runCommandInEditor(
     const editor = await window.showTextDocument(doc);
     await setCursor(editor, cursorPosition);
 
-    await executeCommand(editor, command);
+    await executeCommand.call({ commandName }, editor);
     equal(doc.getText(), endingCode);
 }
 
