@@ -8,7 +8,7 @@ import {
 import {
     generateAst,
     getCurrentEditor,
-    getTextOfFile,
+    getFileText,
     getLanguage,
     getCursor,
     addCommand,
@@ -67,17 +67,20 @@ function stringFilterFunction(node: Node, cursor: number) {
     return isString(node) && isCursorInsideNode(cursor, node);
 }
 
-
 async function selectStringActionFunction(
     editor: TextEditor,
     boundaries: Boundary[]
 ) {
-    //first, remove the quote symbols (so that I only delete the inner string)
-    const boundariesWithoutBraces = boundaries.map(excludeBracesFromBoundary);
+    if (boundaries.length > 0) {
+        //first, remove the quote symbols (so that I only delete the inner string)
+        const boundariesWithoutBraces = boundaries.map(
+            excludeBracesFromBoundary
+        );
 
-    editor.selections = boundariesWithoutBraces.map(boundary =>
-        createSelectionFromBoundary(editor.document, boundary)
-    );
+        editor.selections = boundariesWithoutBraces.map(boundary =>
+            createSelectionFromBoundary(editor.document, boundary)
+        );
+    }
 }
 async function deleteStringActionFunction(
     editor: TextEditor,
@@ -139,7 +142,7 @@ export async function executeCommand(editor: TextEditor) {
     const commandName = this.commandName;
 
     const commandObj = commandConfig[commandName];
-    const ast = generateAst(getTextOfFile(editor), getLanguage(editor));
+    const ast = generateAst(getFileText(editor), getLanguage(editor));
     if (ast) {
         const cursors = getCursors(editor);
 
