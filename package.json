@@ -2,8 +2,14 @@
     "name": "vscode-keyboard-shortcuts",
     "displayName": "DPD VscodeKeyboardShortcuts",
     "description": "",
-    "version": "0.0.5",
+    "keywords": [],
+    "version": "0.0.6",
     "publisher": "dandoozan",
+    "icon": "",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/dandoozan/vscode-keyboard-shortcuts"
+    },
     "engines": {
         "vscode": "^1.30.0"
     },
