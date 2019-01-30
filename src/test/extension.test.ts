@@ -5,14 +5,11 @@ import { setCursor, writeToClipboard, getSelectedText } from '../utils';
 
 //tests i should make for findEnclosingStringBoundary:
 //"regular string"
-//  -begin, middle, end
 //`template string`
-//  -begin, middle, end
-//  -with cursor inside string inside expression
-//'use strict'
-//  -begin, middle, end
+//'directive' (ie. 'use strict')
 //other
 //  -cursor not inside a string
+//  -multi cursor
 
 async function runCommandInEditor(
     startingCode: string,
@@ -62,18 +59,6 @@ describe('selectString', () => {
         strictEqual(selectedText[0], stringContents);
     });
 
-    it('should select string inside template string', async () => {
-        const startingCode = `(\`\${"${stringContents}"}\`)`;
-        const cursorPosition = 5; //<-- just inside the opening quote
-        const editor = await runCommandInEditor(
-            startingCode,
-            cursorPosition,
-            command
-        );
-        const selectedText = getSelectedText(editor);
-        strictEqual(selectedText.length, 1);
-        strictEqual(selectedText[0], stringContents);
-    });
     it('should select directive', async () => {
         const startingCode = `"${stringContents}"`;
         const cursorPosition = 1; //<-- just inside the opening quote
@@ -143,18 +128,6 @@ describe('deleteString', () => {
         strictEqual(editor.document.getText(), endingCode);
     });
 
-    it('should delete string inside template string', async () => {
-        const startingCode = '(`${"Four score and seven years ago..."}`)';
-        const endingCode = '(`${""}`)';
-        const cursorPosition = 5; //<-- just inside the opening quote
-        const editor = await runCommandInEditor(
-            startingCode,
-            cursorPosition,
-            command
-        );
-        strictEqual(editor.document.getText(), endingCode);
-    });
-
     it('should delete directive', async () => {
         const startingCode = '"use strict"';
         const endingCode = '""';
@@ -213,18 +186,6 @@ describe('replaceString', () => {
         const startingCode = '(`Four score and seven years ago...`)';
         const endingCode = `(\`${clipboardContent}\`)`;
         const cursorPosition = 2; //<-- just inside the opening quote
-        const editor = await runCommandInEditor(
-            startingCode,
-            cursorPosition,
-            command
-        );
-        strictEqual(editor.document.getText(), endingCode);
-    });
-
-    it('should replace string inside template string', async () => {
-        const startingCode = '(`${"Four score and seven years ago..."}`)';
-        const endingCode = `(\`\${"${clipboardContent}"}\`)`;
-        const cursorPosition = 5; //<-- just inside the opening quote
         const editor = await runCommandInEditor(
             startingCode,
             cursorPosition,
