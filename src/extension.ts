@@ -12,10 +12,10 @@ import {
     getCursor,
     addCommand,
     deleteBetweenBoundary,
-    filterAst,
+    filterBabelAst,
     isCursorInsideNode,
     getBoundaryExcludingBraces,
-    isString,
+    isStringNode,
     getCursors,
     createDeleteModification,
     Modification,
@@ -64,7 +64,7 @@ export const commandConfig = {
 };
 
 function stringFilterFunction(node: Node, cursor: number) {
-    return isString(node) && isCursorInsideNode(cursor, node);
+    return isStringNode(node) && isCursorInsideNode(cursor, node);
 }
 
 async function selectStringActionFunction(
