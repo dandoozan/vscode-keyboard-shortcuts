@@ -61,7 +61,7 @@
     },
     "devDependencies": {
         "@types/clipboardy": "^1.1.0",
-        "@types/lodash": "^4.14.119",
+        "@types/lodash": "^4.14.120",
         "@types/mocha": "^2.2.42",
         "@types/node": "^8.10.25",
         "typescript": "^3.1.4",
@@ -71,6 +71,7 @@
         "@babel/parser": "^7.2.3",
         "@babel/types": "^7.2.2",
         "clipboardy": "^1.2.3",
+        "json-to-ast": "^2.1.0",
         "lodash": "^4.17.11"
     }
 }

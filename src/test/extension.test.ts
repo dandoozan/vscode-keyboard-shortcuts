@@ -3,13 +3,21 @@ import { workspace, window, commands } from 'vscode';
 import { commandConfig, executeCommand } from '../extension';
 import { setCursor, writeToClipboard, getSelectedText } from '../utils';
 
-//tests i should make for findEnclosingStringBoundary:
-//"regular string"
-//`template string`
-//'directive' (ie. 'use strict')
-//other
-//  -cursor not inside a string
-//  -multi cursor
+//tests i should make:
+//-javascript
+//  -'regular string'
+//  -`template string`
+//  -'directive' (ie. 'use strict')
+//  -other
+//      -cursor not inside a string
+//      -multi cursor
+//-json
+//  -"key"
+//  -"value"
+//  -other
+//      -cursor not inside a string
+//      -multi cursor
+
 
 async function runCommandInEditor(
     startingCode: string,
