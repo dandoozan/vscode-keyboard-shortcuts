@@ -6,7 +6,6 @@ import {
     Selection,
 } from 'vscode';
 import {
-    generateAst,
     getCurrentEditor,
     getFileText,
     getLanguage,
@@ -30,8 +29,9 @@ import {
     excludeBracesFromBoundary,
     createSelectionFromBoundary,
     copy,
+    parseCode,
+    Node,
 } from './utils';
-import { Node } from '@babel/types';
 import { maxBy } from 'lodash';
 
 export interface Command {
@@ -142,19 +142,16 @@ export async function executeCommand(editor: TextEditor) {
     const commandName = this.commandName;
 
     const commandObj = commandConfig[commandName];
-    const ast = generateAst(getFileText(editor), getLanguage(editor));
-    if (ast) {
+    const nodes = parseCode(getFileText(editor), getLanguage(editor));
+    if (nodes) {
         const cursors = getCursors(editor);
 
-        //map the cursors to boundaries
+        //get the enclosing node for each cursor
         const boundaries = cursors
             .map(cursor => {
-                const enclosingNodes = filterAst(
-                    ast,
-                    cursor,
-                    commandObj.filterFunction
+                const enclosingNodes = nodes.filter(
+                    (node: Node) => commandObj.filterFunction(node, cursor)
                 );
-
                 if (enclosingNodes.length > 0) {
                     //get the most enclosing one by finding the one with the last "start" value
                     const mostEnclosingNode = maxBy(enclosingNodes, 'start');
