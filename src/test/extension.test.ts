@@ -284,12 +284,12 @@ xdescribe('JavaScript', () => {
 
 describe('JSON', () => {
     const language = 'json';
+    const startingCode = `{"key": "value"}`;
 
     describe('selectString', () => {
         const command = 'selectString';
 
         it('should select key', async () => {
-            const startingCode = `{"key": "value"}`;
             const cursorPosition = startingCode.indexOf('key');
             const editor = await runCommandInEditor(
                 startingCode,
@@ -303,7 +303,6 @@ describe('JSON', () => {
         });
 
         it('should select value', async () => {
-            const startingCode = `{"key": "value"}`;
             const cursorPosition = startingCode.indexOf('value');
             const editor = await runCommandInEditor(
                 startingCode,
@@ -317,7 +316,6 @@ describe('JSON', () => {
         });
 
         it('should NOT select when cursor is not inside a string', async () => {
-            const startingCode = `{"key": "value"}`;
             const cursorPosition = 0;
             const editor = await runCommandInEditor(
                 startingCode,
@@ -331,8 +329,10 @@ describe('JSON', () => {
         });
 
         it('should select when multiple cursors are inside strings', async () => {
-            const startingCode = `{"key": "value"}`;
-            const cursorPosition = [startingCode.indexOf('key'), startingCode.indexOf('value')];
+            const cursorPosition = [
+                startingCode.indexOf('key'),
+                startingCode.indexOf('value'),
+            ];
             const editor = await runCommandInEditor(
                 startingCode,
                 cursorPosition,
@@ -343,6 +343,46 @@ describe('JSON', () => {
             strictEqual(selectedText.length, 2);
             strictEqual(selectedText[0], 'key');
             strictEqual(selectedText[1], 'value');
+        });
+    });
+
+    describe('deleteString', () => {
+        const command = 'deleteString';
+
+        [
+            {
+                desc: 'should delete key',
+                endingCode: `{"": "value"}`,
+                cursorPosition: startingCode.indexOf('key'),
+            },
+            {
+                desc: 'should delete value',
+                endingCode: `{"key": ""}`,
+                cursorPosition: startingCode.indexOf('value'),
+            },
+            {
+                desc: 'should NOT delete when cursor is not inside a string',
+                endingCode: `{"key": "value"}`,
+                cursorPosition: 0,
+            },
+            {
+                desc: 'should delete when multiple cursors are inside strings',
+                endingCode: `{"": ""}`,
+                cursorPosition: [
+                    startingCode.indexOf('key'),
+                    startingCode.indexOf('value'),
+                ],
+            },
+        ].forEach(({ desc, endingCode, cursorPosition }) => {
+            it(desc, async () => {
+                const editor = await runCommandInEditor(
+                    startingCode,
+                    cursorPosition,
+                    command,
+                    language
+                );
+                strictEqual(editor.document.getText(), endingCode);
+            });
         });
     });
 });
