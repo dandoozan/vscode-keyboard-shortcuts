@@ -1,22 +1,52 @@
 import { strictEqual } from 'assert';
 import { workspace, window, commands } from 'vscode';
-import { commandConfig, executeCommand } from '../extension';
+import { executeCommand } from '../extension';
 import { setCursor, writeToClipboard, getSelectedText } from '../utils';
 
 //tests i should make:
 //-javascript
-//  -'regular string'
-//  -`template string`
-//  -'directive' (ie. 'use strict')
-//  -other
-//      -cursor not inside a string
-//      -multi cursor
+//  -string commands
+//      -selectString
+//          -'regular string'
+//          -`template string`
+//          -'directive' (ie. 'use strict')
+//          -other
+//              -cursor not inside a string
+//              -multi cursor
+//      -deleteString
+//          ...
+//      ...
+//  -parameter commands
+//      -selectParameter
+//          -parameter
+//      ...
+//  ...
+//-typescript
+//  -selectString
+//      -'regular string'
+//      -`template string`
+//      -'directive' (ie. 'use strict')
+//      -other
+//          -cursor not inside a string
+//          -multi cursor
+//  -deleteString
+//      ...
+//  ...
 //-json
-//  -"key"
-//  -"value"
-//  -other
-//      -cursor not inside a string
-//      -multi cursor
+//  -selectString
+//      -"key"
+//      -"value"
+//      -other
+//          -cursor not inside a string
+//          -multi cursor
+//  -deleteString
+//      ...
+//  ...
+
+//startingCode, endingCode, language, command
+const testCases = [
+    []
+]
 
 
 async function runCommandInEditor(
