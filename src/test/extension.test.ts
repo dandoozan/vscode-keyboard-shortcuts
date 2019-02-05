@@ -62,13 +62,14 @@ async function runCommandInEditor(
     return editor;
 }
 
-xdescribe('JavaScript', () => {
+describe('JavaScript', () => {
     const language = 'javascript';
 
     describe('selectString', () => {
         const command = 'selectString';
         const stringContents = 'Four score and seven years ago...';
 
+        //todo: convert these to a foreach
         it('should select string', async () => {
             const startingCode = `("${stringContents}")`;
             const cursorPosition = 2; //<-- just inside the opening quote
@@ -144,6 +145,7 @@ xdescribe('JavaScript', () => {
     describe('deleteString', () => {
         const command = 'deleteString';
 
+        //todo: convert these to a foreach
         it('should delete string', async () => {
             const startingCode = '("Four score and seven years ago...")';
             const endingCode = '("")';
@@ -215,6 +217,7 @@ xdescribe('JavaScript', () => {
         const clipboardContent = '87 years ago...';
         writeToClipboard(clipboardContent);
 
+        //todo: convert these to a foreach
         it('should replace string', async () => {
             const startingCode = '("Four score and seven years ago...")';
             const endingCode = `("${clipboardContent}")`;
