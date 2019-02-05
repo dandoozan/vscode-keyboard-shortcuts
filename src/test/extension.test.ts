@@ -69,77 +69,55 @@ describe('JavaScript', () => {
         const command = 'selectString';
         const stringContents = 'Four score and seven years ago...';
 
-        //todo: convert these to a foreach
-        it('should select string', async () => {
-            const startingCode = `("${stringContents}")`;
-            const cursorPosition = 2; //<-- just inside the opening quote
-            const editor = await runCommandInEditor(
-                startingCode,
-                cursorPosition,
-                command,
-                language
-            );
-            const selectedText = getSelectedText(editor);
-            strictEqual(selectedText.length, 1);
-            strictEqual(selectedText[0], stringContents);
-        });
-
-        it('should select template string', async () => {
-            const startingCode = `(\`${stringContents}\`)`;
-            const cursorPosition = 2; //<-- just inside the opening quote
-            const editor = await runCommandInEditor(
-                startingCode,
-                cursorPosition,
-                command,
-                language
-            );
-            const selectedText = getSelectedText(editor);
-            strictEqual(selectedText.length, 1);
-            strictEqual(selectedText[0], stringContents);
-        });
-
-        it('should select directive', async () => {
-            const startingCode = `"${stringContents}"`;
-            const cursorPosition = 1; //<-- just inside the opening quote
-            const editor = await runCommandInEditor(
-                startingCode,
-                cursorPosition,
-                command,
-                language
-            );
-            const selectedText = getSelectedText(editor);
-            strictEqual(selectedText.length, 1);
-            strictEqual(selectedText[0], stringContents);
-        });
-
-        it('should NOT select when cursor is not inside a string', async () => {
-            const startingCode = `("${stringContents}")`;
-            const cursorPosition = 0;
-            const editor = await runCommandInEditor(
-                startingCode,
-                cursorPosition,
-                command,
-                language
-            );
-            const selectedText = getSelectedText(editor);
-            strictEqual(selectedText.length, 1);
-            strictEqual(selectedText[0], '');
-        });
-
-        it('should select strings when multiple cursors are inside strings', async () => {
-            const startingCode = '("Four score" + "and seven years ago...")';
-            const cursorPosition = [2, 17];
-            const editor = await runCommandInEditor(
-                startingCode,
-                cursorPosition,
-                command,
-                language
-            );
-            const selectedText = getSelectedText(editor);
-            strictEqual(selectedText.length, 2);
-            strictEqual(selectedText[0], 'Four score');
-            strictEqual(selectedText[1], 'and seven years ago...');
-        });
+        [
+            {
+                desc: 'should select string',
+                startingCode: `("${stringContents}")`,
+                cursorPosition: 2, //<-- just inside the opening quote
+                expectedSelections: [`${stringContents}`],
+            },
+            {
+                desc: 'should select template string',
+                startingCode: `(\`${stringContents}\`)`,
+                cursorPosition: 2, //<-- just inside the opening quote
+                expectedSelections: [`${stringContents}`],
+            },
+            {
+                desc: 'should select directive',
+                startingCode: `"${stringContents}"`,
+                cursorPosition: 1, //<-- just inside the opening quote
+                expectedSelections: [`${stringContents}`],
+            },
+            {
+                desc: 'should NOT select when cursor is not inside a string',
+                startingCode: `("${stringContents}")`,
+                cursorPosition: 0,
+                expectedSelections: [''],
+            },
+            {
+                desc:
+                    'should select strings when multiple cursors are inside strings',
+                startingCode: '("Four score" + "and seven years ago...")',
+                cursorPosition: [2, 17],
+                expectedSelections: ['Four score', 'and seven years ago...'],
+            },
+        ].forEach(
+            ({ desc, startingCode, cursorPosition, expectedSelections }) => {
+                it(desc, async () => {
+                    const editor = await runCommandInEditor(
+                        startingCode,
+                        cursorPosition,
+                        command,
+                        language
+                    );
+                    const selections = getSelectedText(editor);
+                    strictEqual(selections.length, expectedSelections.length);
+                    selections.forEach((selection, i) => {
+                        strictEqual(selection, expectedSelections[i]);
+                    });
+                });
+            }
+        );
     });
 
     describe('deleteString', () => {
@@ -328,7 +306,7 @@ describe('JSON', () => {
                 strictEqual(selections.length, expectedSelections.length);
                 selections.forEach((selection, i) => {
                     strictEqual(selection, expectedSelections[i]);
-                })
+                });
             });
         });
     });
