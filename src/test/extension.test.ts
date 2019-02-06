@@ -173,70 +173,48 @@ describe('JavaScript', () => {
         const clipboardContent = '87 years ago...';
         writeToClipboard(clipboardContent);
 
-        //todo: convert these to a foreach
-        it('should replace string', async () => {
-            const startingCode = '("Four score and seven years ago...")';
-            const endingCode = `("${clipboardContent}")`;
-            const cursorPosition = 2; //<-- just inside the opening quote
-            const editor = await runCommandInEditor(
-                startingCode,
-                cursorPosition,
-                command,
-                language
-            );
-            strictEqual(editor.document.getText(), endingCode);
-        });
-
-        it('should replace template string', async () => {
-            const startingCode = '(`Four score and seven years ago...`)';
-            const endingCode = `(\`${clipboardContent}\`)`;
-            const cursorPosition = 2; //<-- just inside the opening quote
-            const editor = await runCommandInEditor(
-                startingCode,
-                cursorPosition,
-                command,
-                language
-            );
-            strictEqual(editor.document.getText(), endingCode);
-        });
-
-        it('should replace directive', async () => {
-            const startingCode = '"use strict"';
-            const endingCode = `"${clipboardContent}"`;
-            const cursorPosition = 1; //<-- just inside the opening quote
-            const editor = await runCommandInEditor(
-                startingCode,
-                cursorPosition,
-                command,
-                language
-            );
-            strictEqual(editor.document.getText(), endingCode);
-        });
-
-        it('should NOT replace when cursor is not inside a string', async () => {
-            const startingCode = '("Four score and seven years ago...")';
-            const endingCode = `("Four score and seven years ago...")`;
-            const cursorPosition = 0;
-            const editor = await runCommandInEditor(
-                startingCode,
-                cursorPosition,
-                command,
-                language
-            );
-            strictEqual(editor.document.getText(), endingCode);
-        });
-
-        it('should replace strings when multiple cursors are inside strings', async () => {
-            const startingCode = '("Four score" + "and seven years ago...")';
-            const endingCode = `("${clipboardContent}" + "${clipboardContent}")`;
-            const cursorPosition = [2, 17];
-            const editor = await runCommandInEditor(
-                startingCode,
-                cursorPosition,
-                command,
-                language
-            );
-            strictEqual(editor.document.getText(), endingCode);
+        [
+            {
+                desc: 'should replace string',
+                startingCode: `("${stringContents}")`,
+                cursorPosition: 2, //<-- just inside the opening quote
+                endingCode: `("${clipboardContent}")`,
+            },
+            {
+                desc: 'should replace template string',
+                startingCode: `(\`${stringContents}\`)`,
+                cursorPosition: 2, //<-- just inside the opening quote
+                endingCode: `(\`${clipboardContent}\`)`,
+            },
+            {
+                desc: 'should replace directive',
+                startingCode: `"${stringContents}"`,
+                cursorPosition: 1, //<-- just inside the opening quote
+                endingCode: `"${clipboardContent}"`,
+            },
+            {
+                desc: 'should NOT replace when cursor is not inside a string',
+                startingCode: `("${stringContents}")`,
+                cursorPosition: 0,
+                endingCode: `("${stringContents}")`,
+            },
+            {
+                desc:
+                    'should replace strings when multiple cursors are inside strings',
+                startingCode: '("Four score" + "and seven years ago...")',
+                cursorPosition: [2, 17],
+                endingCode: `("${clipboardContent}" + "${clipboardContent}")`,
+            },
+        ].forEach(({ desc, startingCode, cursorPosition, endingCode }) => {
+            it(desc, async () => {
+                const editor = await runCommandInEditor(
+                    startingCode,
+                    cursorPosition,
+                    command,
+                    language
+                );
+                strictEqual(editor.document.getText(), endingCode);
+            });
         });
     });
 });
