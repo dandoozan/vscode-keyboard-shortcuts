@@ -1,7 +1,4 @@
-import {
-    ExtensionContext,
-    TextEditor,
-} from 'vscode';
+import { ExtensionContext, TextEditor } from 'vscode';
 import {
     getFileText,
     getLanguage,
@@ -21,6 +18,8 @@ import {
     copy,
     parseCode,
     Node,
+    isBlockNode,
+    notify,
 } from './utils';
 import { maxBy } from 'lodash';
 
@@ -51,10 +50,19 @@ export const commandConfig = {
         filterFunction: stringFilterFunction,
         actionFunction: replaceStringActionFunction,
     },
+
+    selectBlockInner: {
+        filterFunction: blockFilterFunction,
+        actionFunction: selectBlockActionFunction,
+    },
 };
 
 function stringFilterFunction(node: Node, cursor: number) {
     return isStringNode(node) && isCursorInsideNode(cursor, node);
+}
+
+function blockFilterFunction(node: Node, cursor: number) {
+    return isBlockNode(node) && isCursorInsideNode(cursor, node);
 }
 
 async function selectStringActionFunction(
@@ -62,7 +70,7 @@ async function selectStringActionFunction(
     boundaries: Boundary[]
 ) {
     if (boundaries.length > 0) {
-        //first, remove the quote symbols (so that I only delete the inner string)
+        //first, remove the quote symbols (so that I only select the inner string)
         const boundariesWithoutBraces = boundaries.map(
             excludeBracesFromBoundary
         );
@@ -72,6 +80,23 @@ async function selectStringActionFunction(
         );
     }
 }
+async function selectBlockActionFunction(
+    editor: TextEditor,
+    boundaries: Boundary[]
+) {
+    notify('in selectBlockInner');
+    if (boundaries.length > 0) {
+        //first, remove the quote symbols (so that I only select the inner block)
+        const boundariesWithoutBraces = boundaries.map(
+            excludeBracesFromBoundary
+        );
+
+        editor.selections = boundariesWithoutBraces.map(boundary =>
+            createSelectionFromBoundary(editor.document, boundary)
+        );
+    }
+}
+
 async function deleteStringActionFunction(
     editor: TextEditor,
     boundaries: Boundary[]
@@ -139,8 +164,8 @@ export async function executeCommand(editor: TextEditor) {
         //get the enclosing node for each cursor
         const boundaries = cursors
             .map(cursor => {
-                const enclosingNodes = nodes.filter(
-                    (node: Node) => commandObj.filterFunction(node, cursor)
+                const enclosingNodes = nodes.filter((node: Node) =>
+                    commandObj.filterFunction(node, cursor)
                 );
                 if (enclosingNodes.length > 0) {
                     //get the most enclosing one by finding the one with the last "start" value

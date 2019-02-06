@@ -21,7 +21,8 @@
         "onCommand:vks.deleteString",
         "onCommand:vks.cutString",
         "onCommand:vks.copyString",
-        "onCommand:vks.replaceString"
+        "onCommand:vks.replaceString",
+        "onCommand:vks.selectBlockInner"
     ],
     "main": "./out/extension.js",
     "contributes": {
@@ -45,6 +46,11 @@
             {
                 "command": "vks.replaceString",
                 "title": "VKS: Replace String"
+            },
+
+            {
+                "command": "vks.selectBlockInner",
+                "title": "VKS: Select Block Inner"
             }
         ]
     },
