@@ -64,10 +64,10 @@ async function runCommandInEditor(
 
 describe('JavaScript', () => {
     const language = 'javascript';
+    const stringContents = 'Four score and seven years ago...';
 
     describe('selectString', () => {
         const command = 'selectString';
-        const stringContents = 'Four score and seven years ago...';
 
         [
             {
@@ -123,70 +123,48 @@ describe('JavaScript', () => {
     describe('deleteString', () => {
         const command = 'deleteString';
 
-        //todo: convert these to a foreach
-        it('should delete string', async () => {
-            const startingCode = '("Four score and seven years ago...")';
-            const endingCode = '("")';
-            const cursorPosition = 2; //<-- just inside the opening quote
-            const editor = await runCommandInEditor(
-                startingCode,
-                cursorPosition,
-                command,
-                language
-            );
-            strictEqual(editor.document.getText(), endingCode);
-        });
-
-        it('should delete template string', async () => {
-            const startingCode = '(`Four score and seven years ago...`)';
-            const endingCode = '(``)';
-            const cursorPosition = 2; //<-- just inside the opening quote
-            const editor = await runCommandInEditor(
-                startingCode,
-                cursorPosition,
-                command,
-                language
-            );
-            strictEqual(editor.document.getText(), endingCode);
-        });
-
-        it('should delete directive', async () => {
-            const startingCode = '"use strict"';
-            const endingCode = '""';
-            const cursorPosition = 1; //<-- just inside the opening quote
-            const editor = await runCommandInEditor(
-                startingCode,
-                cursorPosition,
-                command,
-                language
-            );
-            strictEqual(editor.document.getText(), endingCode);
-        });
-
-        it('should NOT delete when cursor is not inside a string', async () => {
-            const startingCode = '("Four score and seven years ago...")';
-            const endingCode = '("Four score and seven years ago...")';
-            const cursorPosition = 0;
-            const editor = await runCommandInEditor(
-                startingCode,
-                cursorPosition,
-                command,
-                language
-            );
-            strictEqual(editor.document.getText(), endingCode);
-        });
-
-        it('should delete strings when multiple cursors are inside strings', async () => {
-            const startingCode = '("Four score" + "and seven years ago...")';
-            const endingCode = '("" + "")';
-            const cursorPosition = [2, 17];
-            const editor = await runCommandInEditor(
-                startingCode,
-                cursorPosition,
-                command,
-                language
-            );
-            strictEqual(editor.document.getText(), endingCode);
+        [
+            {
+                desc: 'should delete string',
+                startingCode: `("${stringContents}")`,
+                cursorPosition: 2, //<-- just inside the opening quote
+                endingCode: '("")',
+            },
+            {
+                desc: 'should delete template string',
+                startingCode: `(\`${stringContents}\`)`,
+                cursorPosition: 2, //<-- just inside the opening quote
+                endingCode: '(``)',
+            },
+            {
+                desc: 'should delete directive',
+                startingCode: `"${stringContents}"`,
+                cursorPosition: 1, //<-- just inside the opening quote
+                endingCode: '""',
+            },
+            {
+                desc: 'should NOT delete when cursor is not inside a string',
+                startingCode: `("${stringContents}")`,
+                cursorPosition: 0,
+                endingCode: `("${stringContents}")`,
+            },
+            {
+                desc:
+                    'should delete strings when multiple cursors are inside strings',
+                startingCode: '("Four score" + "and seven years ago...")',
+                cursorPosition: [2, 17],
+                endingCode: '("" + "")',
+            },
+        ].forEach(({ desc, startingCode, cursorPosition, endingCode }) => {
+            it(desc, async () => {
+                const editor = await runCommandInEditor(
+                    startingCode,
+                    cursorPosition,
+                    command,
+                    language
+                );
+                strictEqual(editor.document.getText(), endingCode);
+            });
         });
     });
 
