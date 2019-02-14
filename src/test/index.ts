@@ -17,6 +17,8 @@ import * as testRunner from 'vscode/lib/testrunner';
 testRunner.configure({
     ui: 'bdd', // the TDD UI is being used in extension.test.ts (suite, test, etc.)
     useColors: true, // colored output from test results
+    // fullTrace: false, // <- fullTrace is not an option here for some reason
+    //reporter: 'list', //for more options, see: https://mochajs.org/#reporters
 });
 
 module.exports = testRunner;

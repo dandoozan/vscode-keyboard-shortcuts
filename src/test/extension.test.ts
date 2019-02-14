@@ -57,6 +57,8 @@ async function runCommandInEditor(
     //show the editor so that it's the "activeTextEditor"
     const editor = await window.showTextDocument(doc);
     await setCursor(editor, cursorPosition);
+    // await commands.executeCommand(`vks.${commandName}`); // <- i tried this
+    // but it seems it is not awaiting for some reason
     await executeCommand.call({ commandName }, editor);
 
     return editor;
@@ -221,7 +223,6 @@ describe('JavaScript', () => {
 
 describe('JSON', () => {
     const language = 'json';
-    const startingCode = `{"key1": "value1"}`;
 
     describe('selectString', () => {
         const command = 'selectString';
@@ -229,42 +230,45 @@ describe('JSON', () => {
         [
             {
                 desc: 'should select key',
-                cursorPosition: startingCode.indexOf('key1'),
+                startingCode: `{"key1": "value1"}`,
+                cursorPosition: 2,
                 expectedSelections: ['key1'],
             },
             {
                 desc: 'should select value',
-                cursorPosition: startingCode.indexOf('value1'),
+                startingCode: `{"key1": "value1"}`,
+                cursorPosition: 10,
                 expectedSelections: ['value1'],
             },
             {
                 desc: 'should NOT select when cursor is not inside a string',
+                startingCode: `{"key1": "value1"}`,
                 cursorPosition: 0,
                 expectedSelections: [''],
             },
             {
                 desc: 'should select when multiple cursors are inside strings',
-                cursorPosition: [
-                    startingCode.indexOf('key1'),
-                    startingCode.indexOf('value1'),
-                ],
+                startingCode: `{"key1": "value1"}`,
+                cursorPosition: [2, 10],
                 expectedSelections: ['key1', 'value1'],
             },
-        ].forEach(({ desc, cursorPosition, expectedSelections }) => {
-            it(desc, async () => {
-                const editor = await runCommandInEditor(
-                    startingCode,
-                    cursorPosition,
-                    command,
-                    language
-                );
-                const selections = getSelectedText(editor);
-                strictEqual(selections.length, expectedSelections.length);
-                selections.forEach((selection, i) => {
-                    strictEqual(selection, expectedSelections[i]);
+        ].forEach(
+            ({ desc, startingCode, cursorPosition, expectedSelections }) => {
+                it(desc, async () => {
+                    const editor = await runCommandInEditor(
+                        startingCode,
+                        cursorPosition,
+                        command,
+                        language
+                    );
+                    const selections = getSelectedText(editor);
+                    strictEqual(selections.length, expectedSelections.length);
+                    selections.forEach((selection, i) => {
+                        strictEqual(selection, expectedSelections[i]);
+                    });
                 });
-            });
-        });
+            }
+        );
     });
 
     describe('deleteString', () => {
@@ -273,28 +277,29 @@ describe('JSON', () => {
         [
             {
                 desc: 'should delete key',
+                startingCode: `{"key1": "value1"}`,
+                cursorPosition: 2,
                 endingCode: `{"": "value1"}`,
-                cursorPosition: startingCode.indexOf('key1'),
             },
             {
                 desc: 'should delete value',
+                startingCode: `{"key1": "value1"}`,
+                cursorPosition: 10,
                 endingCode: `{"key1": ""}`,
-                cursorPosition: startingCode.indexOf('value1'),
             },
             {
                 desc: 'should NOT delete when cursor is not inside a string',
-                endingCode: `{"key1": "value1"}`,
+                startingCode: `{"key1": "value1"}`,
                 cursorPosition: 0,
+                endingCode: `{"key1": "value1"}`,
             },
             {
                 desc: 'should delete when multiple cursors are inside strings',
+                startingCode: `{"key1": "value1"}`,
+                cursorPosition: [2, 10],
                 endingCode: `{"": ""}`,
-                cursorPosition: [
-                    startingCode.indexOf('key1'),
-                    startingCode.indexOf('value1'),
-                ],
             },
-        ].forEach(({ desc, endingCode, cursorPosition }) => {
+        ].forEach(({ desc, startingCode, cursorPosition, endingCode }) => {
             it(desc, async () => {
                 const editor = await runCommandInEditor(
                     startingCode,
