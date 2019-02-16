@@ -1,5 +1,19 @@
 # VscodeKeyboardShortcuts
 
+## To add a...
+
+### Action
+1. Add a static method in the Actions class (eg. `static select(editor, boundaries) {...}`)
+2. On the command object, set the "action" property to the action method name (eg. `action: "select"`)
+3. That's it!
+
+### Type
+
+
+### Language
+
+
+
 ## Symlink vs. npm link the utils
 Here are my options:
 1.  Symlink utils from a non-npm module

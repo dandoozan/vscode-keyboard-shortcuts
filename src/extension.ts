@@ -5,57 +5,44 @@ import {
     isCursorInsideNode,
     isStringNode,
     getCursors,
-    createDeleteModification,
-    Modification,
-    makeModifications,
     Boundary,
     addTextEditorCommand,
-    readFromClipboard,
-    createReplaceModification,
     getBoundary,
-    excludeBracesFromBoundary,
-    createSelectionFromBoundary,
-    copy,
     parseCode,
     Node,
     isBlockNode,
-    notify,
 } from './utils';
 import { maxBy } from 'lodash';
-
-export interface Command {
-    filterFunction: Function;
-    actionFunction: Function;
-}
+import { Actions } from './Actions';
 
 export const commandConfig = {
     selectString: {
         filterFunction: stringFilterFunction,
-        actionFunction: selectStringActionFunction,
+        action: 'select',
     },
     deleteString: {
         filterFunction: stringFilterFunction,
-        actionFunction: deleteStringActionFunction,
-        //maybe add: excludeBoundaries; modificationFunction
+        action: 'delete',
     },
     cutString: {
         filterFunction: stringFilterFunction,
-        actionFunction: cutStringActionFunction,
+        action: 'cut',
     },
     copyString: {
         filterFunction: stringFilterFunction,
-        actionFunction: copyStringActionFunction,
+        action: 'copy',
     },
     replaceString: {
         filterFunction: stringFilterFunction,
-        actionFunction: replaceStringActionFunction,
+        action: 'replace',
     },
 
     selectBlockInner: {
         filterFunction: blockFilterFunction,
-        actionFunction: selectBlockActionFunction,
+        action: 'select',
     },
 };
+
 
 function stringFilterFunction(node: Node, cursor: number) {
     return isStringNode(node) && isCursorInsideNode(cursor, node);
@@ -63,93 +50,6 @@ function stringFilterFunction(node: Node, cursor: number) {
 
 function blockFilterFunction(node: Node, cursor: number) {
     return isBlockNode(node) && isCursorInsideNode(cursor, node);
-}
-
-async function selectStringActionFunction(
-    editor: TextEditor,
-    boundaries: Boundary[]
-) {
-    if (boundaries.length > 0) {
-        //first, remove the quote symbols (so that I only select the inner string)
-        const boundariesWithoutBraces = boundaries.map(
-            excludeBracesFromBoundary
-        );
-
-        editor.selections = boundariesWithoutBraces.map(boundary =>
-            createSelectionFromBoundary(editor.document, boundary)
-        );
-    }
-}
-async function selectBlockActionFunction(
-    editor: TextEditor,
-    boundaries: Boundary[]
-) {
-    notify('in selectBlockInner');
-    if (boundaries.length > 0) {
-        //first, remove the quote symbols (so that I only select the inner block)
-        const boundariesWithoutBraces = boundaries.map(
-            excludeBracesFromBoundary
-        );
-
-        editor.selections = boundariesWithoutBraces.map(boundary =>
-            createSelectionFromBoundary(editor.document, boundary)
-        );
-    }
-}
-
-async function deleteStringActionFunction(
-    editor: TextEditor,
-    boundaries: Boundary[]
-) {
-    //first, remove the quote symbols (so that I only delete the inner string)
-    const boundariesWithoutBraces = boundaries.map(excludeBracesFromBoundary);
-
-    //create a "delete" modification for each string
-    const modifications = boundariesWithoutBraces.map(boundary =>
-        createDeleteModification(editor.document, boundary)
-    );
-
-    //do all the modifications
-    await makeModifications(editor, modifications as Modification[]);
-}
-async function cutStringActionFunction(
-    editor: TextEditor,
-    boundaries: Boundary[]
-) {
-    //first, copy the strings
-    await commandConfig.copyString.actionFunction(editor, boundaries);
-
-    //then delete the strings
-    await commandConfig.deleteString.actionFunction(editor, boundaries);
-}
-async function copyStringActionFunction(
-    editor: TextEditor,
-    boundaries: Boundary[]
-) {
-    //first, select the strings
-    await commandConfig.selectString.actionFunction(editor, boundaries);
-
-    //then execute the copy command
-    await copy();
-}
-async function replaceStringActionFunction(
-    editor: TextEditor,
-    boundaries: Boundary[]
-) {
-    //first, remove the quote symbols (so that I only replace the inner string)
-    const boundariesWithoutBraces = boundaries.map(excludeBracesFromBoundary);
-
-    //create a "replace" modification for each string
-    const modifications = boundariesWithoutBraces.map(boundary =>
-        createReplaceModification(
-            editor.document,
-            boundary,
-            readFromClipboard()
-        )
-    );
-
-    //do all the modifications
-    await makeModifications(editor, modifications as Modification[]);
 }
 
 export async function executeCommand(editor: TextEditor) {
@@ -175,7 +75,7 @@ export async function executeCommand(editor: TextEditor) {
             })
             .filter(item => item); //filter out the undefined ones (an item is undefined when a cursor is outside the item)
 
-        await commandObj.actionFunction(editor, boundaries);
+        await Actions[commandObj.action](editor, boundaries as Boundary[]);
     }
 }
 
