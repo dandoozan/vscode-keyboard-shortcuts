@@ -2,80 +2,79 @@ import { ExtensionContext, TextEditor } from 'vscode';
 import {
     getFileText,
     getLanguage,
-    isCursorInsideNode,
-    isStringNode,
     getCursors,
     Boundary,
     addTextEditorCommand,
-    getBoundary,
     parseCode,
-    Node,
-    isBlockNode,
 } from './utils';
 import { maxBy } from 'lodash';
-import { Actions } from './Actions';
+import Actions from './Actions';
+import Node from './Node';
 
 export const commandConfig = {
     selectString: {
-        filterFunction: stringFilterFunction,
+        type: 'string',
         action: 'select',
     },
     deleteString: {
-        filterFunction: stringFilterFunction,
+        type: 'string',
         action: 'delete',
     },
     cutString: {
-        filterFunction: stringFilterFunction,
+        type: 'string',
         action: 'cut',
     },
     copyString: {
-        filterFunction: stringFilterFunction,
+        type: 'string',
         action: 'copy',
     },
     replaceString: {
-        filterFunction: stringFilterFunction,
+        type: 'string',
         action: 'replace',
     },
 
     selectBlockInner: {
-        filterFunction: blockFilterFunction,
+        type: 'block',
         action: 'select',
     },
 };
-
-
-function stringFilterFunction(node: Node, cursor: number) {
-    return isStringNode(node) && isCursorInsideNode(cursor, node);
-}
-
-function blockFilterFunction(node: Node, cursor: number) {
-    return isBlockNode(node) && isCursorInsideNode(cursor, node);
-}
 
 export async function executeCommand(editor: TextEditor) {
     //@ts-ignore (i'm ts-ignoring the line below because it complained about the "this")
     const commandName = this.commandName;
 
-    const commandObj = commandConfig[commandName];
+    const { action, type } = commandConfig[commandName];
+
     const nodes = parseCode(getFileText(editor), getLanguage(editor));
     if (nodes) {
         const cursors = getCursors(editor);
 
         //get the enclosing node for each cursor
-        const boundaries = cursors
+        const actionBoundaries = cursors
             .map(cursor => {
-                const enclosingNodes = nodes.filter((node: Node) =>
-                    commandObj.filterFunction(node, cursor)
-                );
+                const enclosingNodes = nodes.filter((node: Node) => {
+                    let cursorBoundary = node.getCursorBoundary(cursor);
+                    // console.log('​executeCommand -> cursorBoundary=', cursorBoundary);
+                    return (
+                        node.type === type &&
+                        cursorBoundary.start <= cursor &&
+                        cursor <= cursorBoundary.end
+                    );
+                });
+
                 if (enclosingNodes.length > 0) {
                     //get the most enclosing one by finding the one with the last "start" value
-                    const mostEnclosingNode = maxBy(enclosingNodes, 'start');
-                    return getBoundary(mostEnclosingNode);
+                    const mostEnclosingNode = maxBy(enclosingNodes, node =>
+                        node.getCursorBoundary(cursor).start
+                    );
+                    return (mostEnclosingNode as Node).getActionBoundary(
+                        action
+                    );
                 }
             })
             .filter(item => item); //filter out the undefined ones (an item is undefined when a cursor is outside the item)
 
-        await Actions[commandObj.action](editor, boundaries as Boundary[]);
+        await Actions[action](editor, actionBoundaries as Boundary[]);
     }
 }
 

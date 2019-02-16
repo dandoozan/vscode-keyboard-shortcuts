@@ -10,7 +10,7 @@ import {
 } from './utils';
 import { TextEditor } from 'vscode';
 
-export class Actions {
+export default class Actions {
     static async select(
         editor: TextEditor,
         boundaries: Boundary[] | undefined
