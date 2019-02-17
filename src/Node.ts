@@ -1,4 +1,4 @@
-import { Boundary } from "./utils";
+import Boundary from "./Boundary";
 
 export default class Node {
     type: string

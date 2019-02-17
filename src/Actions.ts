@@ -1,5 +1,4 @@
 import {
-    Boundary,
     createSelectionFromBoundary,
     createDeleteModification,
     makeModifications,
@@ -9,6 +8,7 @@ import {
     readFromClipboard,
 } from './utils';
 import { TextEditor } from 'vscode';
+import Boundary from './Boundary';
 
 export default class Actions {
     static async select(

@@ -1,5 +1,5 @@
-import { Boundary } from './utils';
 import StringNode from './StringNode';
+import Boundary from './Boundary';
 
 const NODE_CLASSES = {
     string: StringNode,

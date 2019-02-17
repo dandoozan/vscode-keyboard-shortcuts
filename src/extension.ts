@@ -3,13 +3,13 @@ import {
     getFileText,
     getLanguage,
     getCursors,
-    Boundary,
     addTextEditorCommand,
     parseCode,
 } from './utils';
 import { maxBy } from 'lodash';
 import Actions from './Actions';
 import Node from './Node';
+import Boundary from './Boundary';
 
 export const commandConfig = {
     selectString: {
