@@ -39,8 +39,7 @@ export const commandConfig = {
 
 export async function executeCommand(editor: TextEditor) {
     //@ts-ignore (i'm ts-ignoring the line below because it complained about the "this")
-    const commandName = this.commandName;
-    const { action, type } = commandConfig[commandName];
+    const { action, type } = commandConfig[this.commandName];
 
     const code = getFileText(editor);
     const language = getLanguage(editor);
@@ -49,7 +48,7 @@ export async function executeCommand(editor: TextEditor) {
 
     const cursors = getCursors(editor);
 
-    //get the enclosing node for each cursor
+    //get the most enclosing node for each cursor
     const nodes = cursors
         .map(cursor => parser.getMostEnclosingNodeOfType(type, cursor, code))
         .filter(item => item); //filter out the undefined ones (an item is undefined when a cursor is outside the item)

@@ -2,12 +2,17 @@
 
 ## To add a...
 
-### Action
+### Action (eg. "select")
 1. Add a static method in the Actions class (eg. `static select(editor, boundaries) {...}`)
 2. On the command object, set the "action" property to the action method name (eg. `action: "select"`)
 3. That's it!
 
-### Type
+### Type (eg. "block")
+1. Create a class for the type (eg. `class BlockNode extends Node`)
+2. In NodeFactory, add an entry for the type in `NODE_CLASSES` (to map the type
+   name to the class) (eg. `block: BlockNode`)
+3. In each Parser, add a way to parse the type from the code (this will depend
+   on how the parser is implemented)
 
 
 ### Language

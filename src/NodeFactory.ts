@@ -1,8 +1,10 @@
 import StringNode from './StringNode';
 import Boundary from './Boundary';
+import BlockNode from './BlockNode';
 
 const NODE_CLASSES = {
     string: StringNode,
+    block: BlockNode,
 };
 
 export default class NodeFactory {

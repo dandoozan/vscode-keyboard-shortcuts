@@ -1,4 +1,4 @@
-import { maxBy, isNumber } from 'lodash';
+import { maxBy, isNumber, isEmpty } from 'lodash';
 import Parser from './Parser';
 import { generateBabelAst, traverseBabelAst } from './utils';
 import NodeFactory from './NodeFactory';
@@ -10,14 +10,30 @@ const BABEL_NODE_TO_TYPE_MAPPING = {
     StringLiteral: 'string',
     TemplateLiteral: 'string',
     Directive: 'string',
+    BlockStatement: 'block',
+    ObjectExpression: 'block',
 };
 
 export default class JavaScriptParser extends Parser {
-    nodesByType;
+    private nodesByType = {};
 
-    parseCode(code: string) {
-        const nodes = {};
+    private getNodesByType(code: string) {
+        //populate nodesByType if it hasn't been populated already
+        if (isEmpty(this.nodesByType)) {
+            this.parseCode(code);
+        }
+        return this.nodesByType;
+    }
 
+    private addNode(node: Node) {
+        if (this.nodesByType[node.type]) {
+            this.nodesByType[node.type].push(node);
+        } else {
+            this.nodesByType[node.type] = [node];
+        }
+    }
+
+    private parseCode(code: string) {
         //generate an ast from the code
         const ast = generateBabelAst(code);
         if (ast) {
@@ -31,28 +47,19 @@ export default class JavaScriptParser extends Parser {
                             type,
                             new Boundary(start, end)
                         );
-                        if (nodes[type]) {
-                            nodes[type].push(node);
-                        } else {
-                            nodes[type] = [node];
-                        }
+                        this.addNode(node);
                     }
                 }
             });
         } else {
-            //failed to generate ast
+            //failed to generate ast; maybe throw an error here or something
         }
-
-        return nodes;
     }
 
-    getEnclosingNodesOfType(type: string, cursor: number, code: string) {
-        //create nodeGroups if it hasn't been created already
-        if (!this.nodesByType) {
-            this.nodesByType = this.parseCode(code);
-        }
+    private getEnclosingNodesOfType(type: string, cursor: number, code: string) {
+        const nodesByType = this.getNodesByType(code);
 
-        return this.nodesByType[type].filter(node => {
+        return nodesByType[type].filter(node => {
             let cursorBoundary = node.getCursorBoundary(cursor);
             return (
                 cursorBoundary.start <= cursor && cursor <= cursorBoundary.end
