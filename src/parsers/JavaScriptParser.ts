@@ -1,8 +1,8 @@
 import { isNumber } from 'lodash';
 import Parser from './Parser';
-import { generateBabelAst, traverseBabelAst } from './utils';
-import NodeFactory from './NodeFactory';
-import Boundary from './Boundary';
+import { generateBabelAst, traverseBabelAst } from '../utils';
+import NodeFactory from '../factories/NodeFactory';
+import Boundary from '../Boundary';
 
 const BABEL_NODE_TO_TYPE_MAPPING = {
     StringLiteral: 'string',

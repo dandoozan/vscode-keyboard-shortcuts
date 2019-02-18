@@ -1,5 +1,5 @@
-import JavaScriptParser from './JavaScriptParser';
-import JsonParser from './JsonParser';
+import JavaScriptParser from '../parsers/JavaScriptParser';
+import JsonParser from '../parsers/JsonParser';
 
 const PARSER_CLASSES = {
     javascript: JavaScriptParser,

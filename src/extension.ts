@@ -7,7 +7,7 @@ import {
 } from './utils';
 import Actions from './Actions';
 import Boundary from './Boundary';
-import ParserFactory from './ParserFactory'
+import ParserFactory from './factories/ParserFactory'
 
 export const commandConfig = {
     selectString: {

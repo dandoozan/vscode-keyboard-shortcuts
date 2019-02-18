@@ -1,5 +1,5 @@
 import { isEmpty, maxBy } from "lodash";
-import Node from "./Node";
+import Node from "../nodes/Node";
 
 export default abstract class Parser {
     protected nodesByType = {};
@@ -41,7 +41,7 @@ export default abstract class Parser {
 
     protected getEnclosingNodesOfType(type: string, cursor: number, code: string) {
         const nodesByType = this.getNodesByType(code);
-        
+
         return nodesByType[type].filter(node => {
             let cursorBoundary = node.getCursorBoundary(cursor);
             return (

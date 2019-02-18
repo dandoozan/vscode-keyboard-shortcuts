@@ -1,9 +1,9 @@
 import Node from "./Node";
-import Boundary from "./Boundary";
+import Boundary from "../Boundary";
 
-export default class BlockNode extends Node {
+export default class StringNode extends Node {
     constructor(boundary: Boundary) {
-        super('block', boundary);
+        super('string', boundary);
     }
 
     getActionBoundary(action: string) {

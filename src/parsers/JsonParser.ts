@@ -1,7 +1,7 @@
 import Parser from './Parser';
-import { generateJsonAst, traverseJsonAst } from './utils';
-import NodeFactory from './NodeFactory';
-import Boundary from './Boundary';
+import { generateJsonAst, traverseJsonAst } from '../utils';
+import NodeFactory from '../factories/NodeFactory';
+import Boundary from '../Boundary';
 import { isString, get } from 'lodash';
 
 export default class JsonParser extends Parser {

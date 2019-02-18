@@ -1,6 +1,6 @@
-import StringNode from './StringNode';
-import Boundary from './Boundary';
-import BlockNode from './BlockNode';
+import StringNode from '../nodes/StringNode';
+import Boundary from '../Boundary';
+import BlockNode from '../nodes/BlockNode';
 
 const NODE_CLASSES = {
     string: StringNode,
