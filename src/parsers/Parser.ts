@@ -1,57 +1,62 @@
-import { isEmpty, maxBy } from "lodash";
-import Node from "../nodes/Node";
+import { maxBy, once, fromPairs } from 'lodash';
+import Node from '../nodes/Node';
 
 export default abstract class Parser {
-    protected nodesByType = {};
+    protected typeCreators = {
+        string: this.createStringNodes,
+        block: this.createBlockNodes,
+    };
 
-    protected getNodesByType(code: string) {
-        //populate nodesByType if it hasn't been populated already
-        if (isEmpty(this.nodesByType)) {
-            this.parseCode(code);
-        }
-        return this.nodesByType;
-    }
+    protected abstract createStringNodes(astNode: any): Node[];
+    protected abstract createBlockNodes(astNode: any): Node[];
+    protected abstract createParameterNodes(astNode: any): Node[];
+    protected abstract generateAst(code: string);
+    protected abstract traverseAst(astNode: any, fn: Function);
 
-    protected addNode(node: Node) {
-        if (this.nodesByType[node.type]) {
-            this.nodesByType[node.type].push(node);
-        } else {
-            this.nodesByType[node.type] = [node];
-        }
-    }
+    //todo: test this so that i know the code is only being parsed once
+    private parseCode = once((code: string) => {
+        //initialize nodesByType as an object with keys as the types and values
+        //as empty arrays.  For example: { string: [], block: [] }
+        const nodesByType = fromPairs(Object.keys(this.typeCreators).map((key) => [key, []]))
 
-    protected generateAst(code: string): any {
-        //to be implemented by the subclass
-    }
-    protected traverseAst(astNode: any, fnToApplyToEveryNode: Function) {
-        //to be implemented by the subclass
-    }
-    protected mapAstNodeToTypeNode(astNode: any) {
-        //to be implemented by the subclass
-    }
-
-    protected parseCode(code: string) {
         const ast = this.generateAst(code);
         if (ast) {
-            this.traverseAst(ast, this.mapAstNodeToTypeNode);
+            this.traverseAst(ast, (astNode: any) => {
+                for (const type in this.typeCreators) {
+                    if (this.typeCreators.hasOwnProperty(type)) {
+                        const nodes = this.typeCreators[type].call(
+                            this,
+                            astNode
+                        );
+
+                        //add all nodes
+                        nodes.forEach(node => {
+                            nodesByType[type].push(node);
+                        });
+                    }
+                }
+            });
         } else {
             //failed to generate ast; maybe throw an error here or something
         }
-    }
 
-    protected getEnclosingNodesOfType(type: string, cursor: number, code: string) {
-        const nodesByType = this.getNodesByType(code);
+        return nodesByType;
+    });
 
-        return nodesByType[type].filter(node => {
-            let cursorBoundary = node.getCursorBoundary(cursor);
-            return (
-                cursorBoundary.start <= cursor && cursor <= cursorBoundary.end
-            );
-        });
+    private isCursorInsideNode(node: Node, cursor: number) {
+        let cursorBoundary = node.getCursorBoundary(cursor);
+        return cursorBoundary.start <= cursor && cursor <= cursorBoundary.end;
     }
 
     getMostEnclosingNodeOfType(type: string, cursor: number, code: string) {
-        const enclosingNodes = this.getEnclosingNodesOfType(type, cursor, code);
+        const nodesByType = this.parseCode(code);
+
+        //get all enclosing nodes
+        const enclosingNodes = nodesByType[type].filter(node =>
+            this.isCursorInsideNode(node, cursor)
+        );
+
+        //find the "most" enclosing one
         return maxBy(
             enclosingNodes,
             node => (node as Node).getCursorBoundary(cursor).start
