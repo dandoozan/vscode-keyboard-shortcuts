@@ -3,24 +3,29 @@
 ## To add a...
 
 ### Action (eg. "select")
+
 1. Add a static method in the Actions class (eg. `static select(editor, boundaries) {...}`)
 2. On the command object, set the "action" property to the action method name (eg. `action: "select"`)
 3. That's it!
 
 ### Type (eg. "block")
-1. Create a class for the type (eg. `class BlockNode extends Node`)
+
+1. Create a class for the type (eg. `class BlockNode extends Node {...}`)
 2. In NodeFactory, add an entry for the type in `NODE_CLASSES` (to map the type
    name to the class) (eg. `block: BlockNode`)
 3. In each Parser, add a way to parse the type from the code (this will depend
    on how the parser is implemented)
 
+### Language (eg. "JSON")
 
-### Language
-
-
+1. Create a Parser class for the language (eg. `class JsonParser extends Parser {...}`)
+2. In ParserFactory, add an entry for the language in `PARSER_CLASSES` (to map
+   the language to the class) (eg. `json: JsonParser`) 
 
 ## Symlink vs. npm link the utils
+
 Here are my options:
+
 1.  Symlink utils from a non-npm module
     -   benefits:
         -   the dir containing utils is simple (only has one file)
@@ -37,7 +42,7 @@ Here are my options:
         -   If i change the name/location of the npm module, i only need to
             update it in one spot (the global npm link)
     -   drawbacks:
-        -   When i view the utils file, it adds the _CommonVSCodeExtensions
+        -   When i view the utils file, it adds the \_CommonVSCodeExtensions
             package in the source control sidebar
         -   the project won't work when ppl fork it on github (bc it relies on
             my local npm module)
@@ -59,18 +64,19 @@ Here are my options:
         -   the project is ready to go on github and can be viewed/forked by others
 
 Conclusions:
+
 -   npm link is better than importing from an external location (bc i only have
     to change one spot if i change the name/location of the utils module)
 
 My strategy:
+
 -   If the project is for myself only, then go with option 2
 -   If the project is going to published to production somewhere (eg. for a
     vscode extension that has a link to the repository), then copy the code from
     the utils npm module (with all the tests) over to the project before
-    releasing it.  This is terrible because it creates a fork of the utils file,
+    releasing it. This is terrible because it creates a fork of the utils file,
     but I don't see any other way of getting around this (outside of publishing
     my utils in an npm package and including it as a dependency in the project).
-
 
 ## A note on testing
 
