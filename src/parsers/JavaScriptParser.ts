@@ -2,7 +2,14 @@ import Parser from './Parser';
 import { generateBabelAst, traverseBabelAst } from '../utils';
 import NodeFactory from '../factories/NodeFactory';
 import Boundary from '../Boundary';
-import { isStringLiteral, isTemplateLiteral, isDirective, isBlockStatement, isObjectExpression } from '@babel/types';
+import {
+    isStringLiteral,
+    isTemplateLiteral,
+    isDirective,
+    isBlockStatement,
+    isObjectExpression,
+    isFunction,
+} from '@babel/types';
 import Node from '../nodes/Node';
 
 export default class JavaScriptParser extends Parser {
@@ -37,8 +44,18 @@ export default class JavaScriptParser extends Parser {
         return nodes;
     }
     protected createParameterNodes(astNode: any) {
-        const nodes: Node[] = [];
-        return nodes;
+        if (isFunction(astNode)) {
+            return astNode.params.map(paramNode =>
+                NodeFactory.createNode(
+                    'parameter',
+                    new Boundary(
+                        paramNode.start as number,
+                        paramNode.end as number
+                    )
+                )
+            );
+        }
+        return [];
     }
 
     protected generateAst(code: string) {

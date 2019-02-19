@@ -5,6 +5,7 @@ export default abstract class Parser {
     protected typeCreators = {
         string: this.createStringNodes,
         block: this.createBlockNodes,
+        parameter: this.createParameterNodes,
     };
 
     protected abstract createStringNodes(astNode: any): Node[];
@@ -13,8 +14,7 @@ export default abstract class Parser {
     protected abstract generateAst(code: string);
     protected abstract traverseAst(astNode: any, fn: Function);
 
-    //todo: test this so that i know the code is only being parsed once
-    private parseCode = once((code: string) => {
+    private parseCode(code: string) {
         //initialize nodesByType as an object with keys as the types and values
         //as empty arrays.  For example: { string: [], block: [] }
         const nodesByType = fromPairs(Object.keys(this.typeCreators).map((key) => [key, []]))
@@ -41,7 +41,7 @@ export default abstract class Parser {
         }
 
         return nodesByType;
-    });
+    }
 
     private isCursorInsideNode(node: Node, cursor: number) {
         let cursorBoundary = node.getCursorBoundary(cursor);

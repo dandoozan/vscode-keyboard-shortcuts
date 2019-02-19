@@ -4,46 +4,22 @@ import {
     getLanguage,
     getCursors,
     addTextEditorCommand,
+    getExtensionCommands,
 } from './utils';
 import Actions from './Actions';
 import Boundary from './Boundary';
-import ParserFactory from './factories/ParserFactory'
-
-export const commandConfig = {
-    selectString: {
-        type: 'string',
-        action: 'select',
-    },
-    deleteString: {
-        type: 'string',
-        action: 'delete',
-    },
-    cutString: {
-        type: 'string',
-        action: 'cut',
-    },
-    copyString: {
-        type: 'string',
-        action: 'copy',
-    },
-    replaceString: {
-        type: 'string',
-        action: 'replace',
-    },
-
-    selectBlockInner: {
-        type: 'block',
-        action: 'select',
-    },
-};
+import ParserFactory from './factories/ParserFactory';
 
 export async function executeCommand(editor: TextEditor) {
     //@ts-ignore (i'm ts-ignoring the line below because it complained about the "this")
-    const { action, type } = commandConfig[this.commandName];
+    const { action, type } = this;
 
     const code = getFileText(editor);
     const language = getLanguage(editor);
 
+    //todo: improve efficiency by persisting the parser between commands (right
+    //now, I'm creating a new Parser each time a command is run, meaning the
+    //file is re-parsed (ie. an AST is generated from the code) each time)
     const parser = ParserFactory.createParser(language);
 
     const cursors = getCursors(editor);
@@ -59,16 +35,10 @@ export async function executeCommand(editor: TextEditor) {
 }
 
 export function activate(context: ExtensionContext) {
-    for (const commandName in commandConfig) {
-        if (commandConfig.hasOwnProperty(commandName)) {
-            addTextEditorCommand(
-                `vks.${commandName}`,
-                executeCommand,
-                context,
-                { commandName }
-            );
-        }
-    }
+    const commands = getExtensionCommands();
+    commands.forEach(({ command, data }) => {
+        addTextEditorCommand(command, executeCommand, context, data);
+    });
 }
 
 export function deactivate() {}

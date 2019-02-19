@@ -13,14 +13,16 @@
 1. Create a class for the type (eg. `class BlockNode extends Node {...}`)
 2. In NodeFactory, add an entry for the type in `NODE_CLASSES` (to map the type
    name to the class) (eg. `block: BlockNode`)
-3. In each Parser, add a way to parse the type from the code (this will depend
-   on how the parser is implemented)
+3. In Parser:
+   1. Add an entry in `typeCreators` (eg. `block: this.createBlockNodes`)
+   2. Add an abstract method for the type creator (eg. `abstract createBlockNodes(astNode: any): Node[];`)
+4. In each Parser subclass, implement `createBlockNodes`
 
 ### Language (eg. "JSON")
 
 1. Create a Parser class for the language (eg. `class JsonParser extends Parser {...}`)
 2. In ParserFactory, add an entry for the language in `PARSER_CLASSES` (to map
-   the language to the class) (eg. `json: JsonParser`) 
+   the language to the class) (eg. `json: JsonParser`)
 
 ## Symlink vs. npm link the utils
 

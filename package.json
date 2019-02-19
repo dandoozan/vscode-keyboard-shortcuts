@@ -22,35 +22,68 @@
         "onCommand:vks.cutString",
         "onCommand:vks.copyString",
         "onCommand:vks.replaceString",
-        "onCommand:vks.selectBlockInner"
+        "onCommand:vks.selectBlockInner",
+        "onCommand:vks.selectParameter"
     ],
     "main": "./out/extension.js",
     "contributes": {
         "commands": [
             {
                 "command": "vks.selectString",
-                "title": "VKS: Select String"
+                "title": "VKS: Select String",
+                "data": {
+                    "type": "string",
+                    "action": "select"
+                }
             },
             {
                 "command": "vks.deleteString",
-                "title": "VKS: Delete String"
+                "title": "VKS: Delete String",
+                "data": {
+                    "type": "string",
+                    "action": "delete"
+                }
             },
             {
                 "command": "vks.cutString",
-                "title": "VKS: Cut String"
+                "title": "VKS: Cut String",
+                "data": {
+                    "type": "string",
+                    "action": "cut"
+                }
             },
             {
                 "command": "vks.copyString",
-                "title": "VKS: Copy String"
+                "title": "VKS: Copy String",
+                "data": {
+                    "type": "string",
+                    "action": "copy"
+                }
             },
             {
                 "command": "vks.replaceString",
-                "title": "VKS: Replace String"
+                "title": "VKS: Replace String",
+                "data": {
+                    "type": "string",
+                    "action": "replace"
+                }
             },
 
             {
                 "command": "vks.selectBlockInner",
-                "title": "VKS: Select Block Inner"
+                "title": "VKS: Select Block Inner",
+                "data": {
+                    "type": "block",
+                    "action": "select"
+                }
+            },
+            {
+                "command": "vks.selectParameter",
+                "title": "VKS: Select Parameter",
+                "data": {
+                    "type": "parameter",
+                    "action": "select"
+                }
             }
         ]
     },
