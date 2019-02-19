@@ -57,9 +57,9 @@ async function runCommandInEditor(
     //show the editor so that it's the "activeTextEditor"
     const editor = await window.showTextDocument(doc);
     await setCursor(editor, cursorPosition);
-    // await commands.executeCommand(`vks.${commandName}`); // <- i tried this
+    await commands.executeCommand(`vks.${commandName}`); // <- i tried this
     // but it seems it is not awaiting for some reason
-    await executeCommand.call({ commandName }, editor);
+    // await executeCommand.call({ commandName }, editor);
 
     return editor;
 }
@@ -71,7 +71,7 @@ describe('JavaScript', () => {
     describe('selectString', () => {
         const command = 'selectString';
 
-        [
+        const testCases = [
             {
                 desc: 'should select string',
                 startingCode: `("${stringContents}")`,
@@ -103,29 +103,36 @@ describe('JavaScript', () => {
                 cursorPosition: [2, 17],
                 expectedSelections: ['Four score', 'and seven years ago...'],
             },
-        ].forEach(
-            ({ desc, startingCode, cursorPosition, expectedSelections }) => {
-                it(desc, async () => {
-                    const editor = await runCommandInEditor(
-                        startingCode,
-                        cursorPosition,
-                        command,
-                        language
-                    );
-                    const selections = getSelectedText(editor);
-                    strictEqual(selections.length, expectedSelections.length);
-                    selections.forEach((selection, i) => {
-                        strictEqual(selection, expectedSelections[i]);
-                    });
+        ];
+
+        for (const testCase of testCases) {
+            const {
+                desc,
+                startingCode,
+                cursorPosition,
+                expectedSelections,
+            } = testCase;
+
+            it(desc, async () => {
+                const editor = await runCommandInEditor(
+                    startingCode,
+                    cursorPosition,
+                    command,
+                    language
+                );
+                const selections = getSelectedText(editor);
+                strictEqual(selections.length, expectedSelections.length);
+                selections.forEach((selection, i) => {
+                    strictEqual(selection, expectedSelections[i]);
                 });
-            }
-        );
+            });
+        }
     });
 
     describe('deleteString', () => {
         const command = 'deleteString';
 
-        [
+        const testCases = [
             {
                 desc: 'should delete string',
                 startingCode: `("${stringContents}")`,
@@ -157,7 +164,10 @@ describe('JavaScript', () => {
                 cursorPosition: [2, 17],
                 endingCode: '("" + "")',
             },
-        ].forEach(({ desc, startingCode, cursorPosition, endingCode }) => {
+        ];
+
+        for (const testCase of testCases) {
+            const { desc, startingCode, cursorPosition, endingCode } = testCase;
             it(desc, async () => {
                 const editor = await runCommandInEditor(
                     startingCode,
@@ -167,7 +177,7 @@ describe('JavaScript', () => {
                 );
                 strictEqual(editor.document.getText(), endingCode);
             });
-        });
+        }
     });
 
     describe('replaceString', () => {
@@ -175,7 +185,7 @@ describe('JavaScript', () => {
         const clipboardContent = '87 years ago...';
         writeToClipboard(clipboardContent);
 
-        [
+        const testCases = [
             {
                 desc: 'should replace string',
                 startingCode: `("${stringContents}")`,
@@ -207,7 +217,10 @@ describe('JavaScript', () => {
                 cursorPosition: [2, 17],
                 endingCode: `("${clipboardContent}" + "${clipboardContent}")`,
             },
-        ].forEach(({ desc, startingCode, cursorPosition, endingCode }) => {
+        ];
+
+        for (const testCase of testCases) {
+            const { desc, startingCode, cursorPosition, endingCode } = testCase;
             it(desc, async () => {
                 const editor = await runCommandInEditor(
                     startingCode,
@@ -217,7 +230,7 @@ describe('JavaScript', () => {
                 );
                 strictEqual(editor.document.getText(), endingCode);
             });
-        });
+        }
     });
 });
 
@@ -227,7 +240,7 @@ describe('JSON', () => {
     describe('selectString', () => {
         const command = 'selectString';
 
-        [
+        const testCases = [
             {
                 desc: 'should select key',
                 startingCode: `{"key1": "value1"}`,
@@ -252,29 +265,35 @@ describe('JSON', () => {
                 cursorPosition: [2, 10],
                 expectedSelections: ['key1', 'value1'],
             },
-        ].forEach(
-            ({ desc, startingCode, cursorPosition, expectedSelections }) => {
-                it(desc, async () => {
-                    const editor = await runCommandInEditor(
-                        startingCode,
-                        cursorPosition,
-                        command,
-                        language
-                    );
-                    const selections = getSelectedText(editor);
-                    strictEqual(selections.length, expectedSelections.length);
-                    selections.forEach((selection, i) => {
-                        strictEqual(selection, expectedSelections[i]);
-                    });
+        ];
+
+        for (const testCase of testCases) {
+            const {
+                desc,
+                startingCode,
+                cursorPosition,
+                expectedSelections,
+            } = testCase;
+            it(desc, async () => {
+                const editor = await runCommandInEditor(
+                    startingCode,
+                    cursorPosition,
+                    command,
+                    language
+                );
+                const selections = getSelectedText(editor);
+                strictEqual(selections.length, expectedSelections.length);
+                selections.forEach((selection, i) => {
+                    strictEqual(selection, expectedSelections[i]);
                 });
-            }
-        );
+            });
+        }
     });
 
     describe('deleteString', () => {
         const command = 'deleteString';
 
-        [
+        const testCases = [
             {
                 desc: 'should delete key',
                 startingCode: `{"key1": "value1"}`,
@@ -299,7 +318,10 @@ describe('JSON', () => {
                 cursorPosition: [2, 10],
                 endingCode: `{"": ""}`,
             },
-        ].forEach(({ desc, startingCode, cursorPosition, endingCode }) => {
+        ];
+
+        for (const testCase of testCases) {
+            const { desc, startingCode, cursorPosition, endingCode } = testCase;
             it(desc, async () => {
                 const editor = await runCommandInEditor(
                     startingCode,
@@ -309,6 +331,6 @@ describe('JSON', () => {
                 );
                 strictEqual(editor.document.getText(), endingCode);
             });
-        });
+        }
     });
 });
