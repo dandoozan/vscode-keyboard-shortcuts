@@ -3,7 +3,7 @@
     "displayName": "DPD VKS",
     "description": "",
     "keywords": [],
-    "version": "0.0.7",
+    "version": "0.0.8",
     "publisher": "dandoozan",
     "icon": "",
     "repository": {
@@ -64,7 +64,6 @@
                     "action": "replace"
                 }
             },
-
             {
                 "command": "vks.selectBlockInner",
                 "title": "VKS: Select Block Inner",
