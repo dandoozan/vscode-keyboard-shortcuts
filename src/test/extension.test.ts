@@ -166,6 +166,102 @@ describe('Select', () => {
     }
 });
 
+describe('Delete', () => {
+    const action = 'delete';
+
+    const testCases = [
+        //strings
+        {
+            desc: 'should delete string',
+            type: 'string',
+            language: 'javascript',
+            startingCode: `("Four score and seven years ago...")`,
+            cursorPosition: 2, //<-- just inside the opening quote
+            endingCode: '("")',
+        },
+        {
+            desc: 'should delete template string',
+            type: 'string',
+            language: 'javascript',
+            startingCode: `(\`Four score and seven years ago...\`)`,
+            cursorPosition: 2, //<-- just inside the opening quote
+            endingCode: '(``)',
+        },
+        {
+            desc: 'should delete directive',
+            type: 'string',
+            language: 'javascript',
+            startingCode: `"Four score and seven years ago..."`,
+            cursorPosition: 1, //<-- just inside the opening quote
+            endingCode: '""',
+        },
+        {
+            desc: 'should NOT delete when cursor is not inside a string',
+            type: 'string',
+            language: 'javascript',
+            startingCode: `("Four score and seven years ago...")`,
+            cursorPosition: 0,
+            endingCode: `("Four score and seven years ago...")`,
+        },
+        {
+            desc:
+                'should delete strings when multiple cursors are inside strings',
+            type: 'string',
+            language: 'javascript',
+            startingCode: '("Four score" + "and seven years ago...")',
+            cursorPosition: [2, 17],
+            endingCode: '("" + "")',
+        },
+
+        //blocks
+        {
+            desc: 'should delete inner block',
+            type: 'block',
+            language: 'javascript',
+            startingCode: '({a:1})',
+            cursorPosition: 2, //<-- just inside the opening bracket
+            endingCode: '({})',
+        },
+        {
+            desc: 'should delete inner block when it is multiline',
+            type: 'block',
+            language: 'javascript',
+            startingCode: '({\n' + '    a: 1,\n' + '    b: 2,\n' + '})',
+            cursorPosition: 2,
+            endingCode: '({})',
+        },
+        {
+            desc: 'should NOT delete when cursor is not inside a block',
+            type: 'block',
+            language: 'javascript',
+            startingCode: '({a:1})',
+            cursorPosition: 0,
+            endingCode: '({a:1})',
+        },
+    ];
+
+    for (const testCase of testCases) {
+        const {
+            desc,
+            type,
+            language,
+            startingCode,
+            cursorPosition,
+            endingCode,
+        } = testCase;
+        it(desc, async () => {
+            const editor = await runCommandInEditor(
+                startingCode,
+                cursorPosition,
+                action,
+                type,
+                language
+            );
+            strictEqual(editor.document.getText(), endingCode);
+        });
+    }
+});
+
 xdescribe('JavaScript', () => {
     const language = 'javascript';
     const stringContents = 'Four score and seven years ago...';

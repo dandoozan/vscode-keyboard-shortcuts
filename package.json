@@ -73,6 +73,14 @@
                 }
             },
             {
+                "command": "vks.deleteBlockInner",
+                "title": "VKS: Delete Block Inner",
+                "data": {
+                    "type": "block",
+                    "action": "delete"
+                }
+            },
+            {
                 "command": "vks.selectParameter",
                 "title": "VKS: Select Parameter",
                 "data": {

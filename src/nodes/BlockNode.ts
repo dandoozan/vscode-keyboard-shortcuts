@@ -8,7 +8,7 @@ export default class BlockNode extends Node {
         super('block', boundary, editor);
     }
 
-    getActionBoundary(action: string) {
+    getBoundaryForSelectAction() {
         let boundaryStart = this.boundary.start + 1; //exclude the opening bracket
         let boundaryEnd = this.boundary.end - 1; //exclude the ending bracket
 
@@ -29,4 +29,14 @@ export default class BlockNode extends Node {
 
         return new Boundary(boundaryStart, boundaryEnd)
     }
+
+    getActionBoundary(action: string) {
+        switch (action) {
+            case 'select':
+                return this.getBoundaryForSelectAction();
+        }
+        return new Boundary(this.boundary.start + 1, this.boundary.end - 1);
+    }
+
+
 }
