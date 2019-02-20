@@ -1,24 +1,14 @@
-import { maxBy, once, fromPairs } from 'lodash';
+import { maxBy, fromPairs } from 'lodash';
 import Node from '../nodes/Node';
 import { TextEditor } from 'vscode';
 
 export default abstract class Parser {
     editor: TextEditor
-    typeCreators = {
-        string: this.createStringNodes,
-        block: this.createBlockNodes,
-        inner_block: this.createInnerBlockNodes,
-        parameter: this.createParameterNodes,
-    };
-
+    typeCreators: Object = {}
     constructor(editor: TextEditor) {
         this.editor = editor;
     }
 
-    abstract createStringNodes(astNode: any): Node[];
-    abstract createBlockNodes(astNode: any): Node[];
-    abstract createInnerBlockNodes(astNode: any): Node[];
-    abstract createParameterNodes(astNode: any): Node[];
     abstract generateAst(code: string);
     abstract traverseAst(astNode: any, fn: Function);
 

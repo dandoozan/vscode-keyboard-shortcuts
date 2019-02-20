@@ -13,10 +13,7 @@
 1. Create a class for the type (eg. `class BlockNode extends Node {...}`)
 2. In NodeFactory, add an entry for the type in `NODE_CLASSES` (to map the type
    name to the class) (eg. `block: BlockNode`)
-3. In Parser:
-   1. Add an entry in `typeCreators` (eg. `block: this.createBlockNodes`)
-   2. Add an abstract method for the type creator (eg. `abstract createBlockNodes(astNode: any): Node[];`)
-4. In each Parser subclass, implement `createBlockNodes`
+3. In the Parser classes, add an entry in `typeCreators` (eg. `block: this.createBlockNodes`)
 
 ### Language (eg. "JSON")
 

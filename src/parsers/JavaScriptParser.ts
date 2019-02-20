@@ -13,6 +13,13 @@ import {
 import Node from '../nodes/Node';
 
 export default class JavaScriptParser extends Parser {
+    typeCreators = {
+        string: this.createStringNodes,
+        block: this.createBlockNodes,
+        inner_block: this.createInnerBlockNodes,
+        parameter: this.createParameterNodes,
+    };
+
     createStringNodes(astNode: any) {
         const nodes: Node[] = [];
         if (

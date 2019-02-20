@@ -6,6 +6,12 @@ import { isString, get } from 'lodash';
 import Node from '../nodes/Node';
 
 export default class JsonParser extends Parser {
+    typeCreators = {
+        string: this.createStringNodes,
+        block: this.createBlockNodes,
+        inner_block: this.createInnerBlockNodes,
+    };
+
     createStringNodes(astNode: any) {
         const nodes: Node[] = [];
         if (
@@ -29,10 +35,6 @@ export default class JsonParser extends Parser {
         return nodes;
     }
     createInnerBlockNodes(astNode: any) {
-        const nodes: Node[] = [];
-        return nodes;
-    }
-    createParameterNodes(astNode: any) {
         const nodes: Node[] = [];
         return nodes;
     }
