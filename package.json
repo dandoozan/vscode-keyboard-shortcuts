@@ -73,11 +73,11 @@
                 }
             },
             {
-                "command": "vks.deleteInnerBlock",
-                "title": "VKS: Delete Inner Block",
+                "command": "vks.copyInnerBlock",
+                "title": "VKS: Copy Inner Block",
                 "data": {
                     "type": "inner_block",
-                    "action": "delete"
+                    "action": "copy"
                 }
             },
             {

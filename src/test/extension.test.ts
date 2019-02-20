@@ -212,32 +212,6 @@ describe('Delete', () => {
             cursorPosition: [2, 17],
             endingCode: '("" + "")',
         },
-
-        //blocks
-        {
-            desc: 'should delete inner block',
-            type: 'inner_block',
-            language: 'javascript',
-            startingCode: '({a:1})',
-            cursorPosition: 2, //<-- just inside the opening bracket
-            endingCode: '({})',
-        },
-        {
-            desc: 'should delete inner block when it is multiline',
-            type: 'inner_block',
-            language: 'javascript',
-            startingCode: '({\n' + '    a: 1,\n' + '    b: 2,\n' + '})',
-            cursorPosition: 2,
-            endingCode: '({})',
-        },
-        {
-            desc: 'should NOT delete when cursor is not inside a block',
-            type: 'inner_block',
-            language: 'javascript',
-            startingCode: '({a:1})',
-            cursorPosition: 0,
-            endingCode: '({a:1})',
-        },
     ];
 
     for (const testCase of testCases) {
