@@ -46,7 +46,8 @@ import { setCursor, writeToClipboard, getSelectedText } from '../utils';
 async function runCommandInEditor(
     startingCode: string,
     cursorPosition: number | number[],
-    commandName: string,
+    action: string,
+    type: string,
     language: string
 ) {
     const doc = await workspace.openTextDocument({
@@ -57,9 +58,9 @@ async function runCommandInEditor(
     //show the editor so that it's the "activeTextEditor"
     const editor = await window.showTextDocument(doc);
     await setCursor(editor, cursorPosition);
-    await commands.executeCommand(`vks.${commandName}`); // <- i tried this
+    // await commands.executeCommand(`vks.${commandName}`); // <- i tried this
     // but it seems it is not awaiting for some reason
-    // await executeCommand.call({ commandName }, editor);
+    await executeCommand.call({ action, type }, editor);
 
     return editor;
 }
@@ -69,7 +70,8 @@ describe('JavaScript', () => {
     const stringContents = 'Four score and seven years ago...';
 
     describe('selectString', () => {
-        const command = 'selectString';
+        const action = 'select';
+        const type = 'string';
 
         const testCases = [
             {
@@ -117,7 +119,8 @@ describe('JavaScript', () => {
                 const editor = await runCommandInEditor(
                     startingCode,
                     cursorPosition,
-                    command,
+                    action,
+                    type,
                     language
                 );
                 const selections = getSelectedText(editor);
@@ -130,7 +133,8 @@ describe('JavaScript', () => {
     });
 
     describe('deleteString', () => {
-        const command = 'deleteString';
+        const action = 'delete';
+        const type = 'string';
 
         const testCases = [
             {
@@ -172,7 +176,8 @@ describe('JavaScript', () => {
                 const editor = await runCommandInEditor(
                     startingCode,
                     cursorPosition,
-                    command,
+                    action,
+                    type,
                     language
                 );
                 strictEqual(editor.document.getText(), endingCode);
@@ -181,7 +186,8 @@ describe('JavaScript', () => {
     });
 
     describe('replaceString', () => {
-        const command = 'replaceString';
+        const action = 'replace';
+        const type = 'string';
         const clipboardContent = '87 years ago...';
         writeToClipboard(clipboardContent);
 
@@ -225,7 +231,8 @@ describe('JavaScript', () => {
                 const editor = await runCommandInEditor(
                     startingCode,
                     cursorPosition,
-                    command,
+                    action,
+                    type,
                     language
                 );
                 strictEqual(editor.document.getText(), endingCode);
@@ -238,7 +245,8 @@ describe('JSON', () => {
     const language = 'json';
 
     describe('selectString', () => {
-        const command = 'selectString';
+        const action = 'select';
+        const type = 'string';
 
         const testCases = [
             {
@@ -278,7 +286,8 @@ describe('JSON', () => {
                 const editor = await runCommandInEditor(
                     startingCode,
                     cursorPosition,
-                    command,
+                    action,
+                    type,
                     language
                 );
                 const selections = getSelectedText(editor);
@@ -291,7 +300,8 @@ describe('JSON', () => {
     });
 
     describe('deleteString', () => {
-        const command = 'deleteString';
+        const action = 'delete';
+        const type = 'string';
 
         const testCases = [
             {
@@ -326,7 +336,8 @@ describe('JSON', () => {
                 const editor = await runCommandInEditor(
                     startingCode,
                     cursorPosition,
-                    command,
+                    action,
+                    type,
                     language
                 );
                 strictEqual(editor.document.getText(), endingCode);
