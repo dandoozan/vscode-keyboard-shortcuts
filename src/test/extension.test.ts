@@ -115,7 +115,7 @@ describe('Select', () => {
         //blocks
         {
             desc: 'should select inner block',
-            type: 'block',
+            type: 'inner_block',
             language: 'javascript',
             startingCode: '({a:1})',
             cursorPosition: 2,
@@ -123,7 +123,7 @@ describe('Select', () => {
         },
         {
             desc: 'should select inner block when it is multiline',
-            type: 'block',
+            type: 'inner_block',
             language: 'javascript',
             startingCode: '({\n' + '    a: 1,\n' + '    b: 2,\n' + '})',
             cursorPosition: 2,
@@ -131,7 +131,7 @@ describe('Select', () => {
         },
         {
             desc: 'should NOT select when cursor is not inside a block',
-            type: 'block',
+            type: 'inner_block',
             language: 'javascript',
             startingCode: '({a:1})',
             cursorPosition: 0,
@@ -216,7 +216,7 @@ describe('Delete', () => {
         //blocks
         {
             desc: 'should delete inner block',
-            type: 'block',
+            type: 'inner_block',
             language: 'javascript',
             startingCode: '({a:1})',
             cursorPosition: 2, //<-- just inside the opening bracket
@@ -224,7 +224,7 @@ describe('Delete', () => {
         },
         {
             desc: 'should delete inner block when it is multiline',
-            type: 'block',
+            type: 'inner_block',
             language: 'javascript',
             startingCode: '({\n' + '    a: 1,\n' + '    b: 2,\n' + '})',
             cursorPosition: 2,
@@ -232,7 +232,7 @@ describe('Delete', () => {
         },
         {
             desc: 'should NOT delete when cursor is not inside a block',
-            type: 'block',
+            type: 'inner_block',
             language: 'javascript',
             startingCode: '({a:1})',
             cursorPosition: 0,

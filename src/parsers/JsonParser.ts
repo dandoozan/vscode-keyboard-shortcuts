@@ -6,7 +6,7 @@ import { isString, get } from 'lodash';
 import Node from '../nodes/Node';
 
 export default class JsonParser extends Parser {
-    protected createStringNodes(astNode: any) {
+    createStringNodes(astNode: any) {
         const nodes: Node[] = [];
         if (
             astNode.type === 'Identifier' ||
@@ -24,19 +24,23 @@ export default class JsonParser extends Parser {
         }
         return nodes;
     }
-    protected createBlockNodes(astNode: any) {
+    createBlockNodes(astNode: any) {
         const nodes: Node[] = [];
         return nodes;
     }
-    protected createParameterNodes(astNode: any) {
+    createInnerBlockNodes(astNode: any) {
+        const nodes: Node[] = [];
+        return nodes;
+    }
+    createParameterNodes(astNode: any) {
         const nodes: Node[] = [];
         return nodes;
     }
 
-    protected generateAst(code: string) {
+    generateAst(code: string) {
         return generateJsonAst(code);
     }
-    protected traverseAst(astNode: any, fnToApplyToEveryNode: Function) {
+    traverseAst(astNode: any, fnToApplyToEveryNode: Function) {
         traverseJsonAst(astNode, fnToApplyToEveryNode.bind(this));
     }
 }

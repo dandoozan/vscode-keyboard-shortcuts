@@ -65,18 +65,18 @@
                 }
             },
             {
-                "command": "vks.selectBlockInner",
-                "title": "VKS: Select Block Inner",
+                "command": "vks.selectInnerBlock",
+                "title": "VKS: Select Inner Block",
                 "data": {
-                    "type": "block",
+                    "type": "inner_block",
                     "action": "select"
                 }
             },
             {
-                "command": "vks.deleteBlockInner",
-                "title": "VKS: Delete Block Inner",
+                "command": "vks.deleteInnerBlock",
+                "title": "VKS: Delete Inner Block",
                 "data": {
-                    "type": "block",
+                    "type": "inner_block",
                     "action": "delete"
                 }
             },

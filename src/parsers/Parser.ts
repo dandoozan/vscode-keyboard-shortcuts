@@ -4,9 +4,10 @@ import { TextEditor } from 'vscode';
 
 export default abstract class Parser {
     editor: TextEditor
-    protected typeCreators = {
+    typeCreators = {
         string: this.createStringNodes,
         block: this.createBlockNodes,
+        inner_block: this.createInnerBlockNodes,
         parameter: this.createParameterNodes,
     };
 
@@ -14,11 +15,12 @@ export default abstract class Parser {
         this.editor = editor;
     }
 
-    protected abstract createStringNodes(astNode: any): Node[];
-    protected abstract createBlockNodes(astNode: any): Node[];
-    protected abstract createParameterNodes(astNode: any): Node[];
-    protected abstract generateAst(code: string);
-    protected abstract traverseAst(astNode: any, fn: Function);
+    abstract createStringNodes(astNode: any): Node[];
+    abstract createBlockNodes(astNode: any): Node[];
+    abstract createInnerBlockNodes(astNode: any): Node[];
+    abstract createParameterNodes(astNode: any): Node[];
+    abstract generateAst(code: string);
+    abstract traverseAst(astNode: any, fn: Function);
 
     private parseCode(code: string) {
         //initialize nodesByType as an object with keys as the types and values

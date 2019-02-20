@@ -1,13 +1,15 @@
+import { TextEditor } from 'vscode';
 import StringNode from '../nodes/StringNode';
 import Boundary from '../Boundary';
 import BlockNode from '../nodes/BlockNode';
+import InnerBlockNode from '../nodes/InnerBlockNode';
 import ParameterNode from '../nodes/ParameterNode';
-import { TextEditor } from 'vscode';
 
 const NODE_CLASSES = {
     string: StringNode,
     block: BlockNode,
-    parameter: ParameterNode
+    inner_block: InnerBlockNode,
+    parameter: ParameterNode,
 };
 
 export default class NodeFactory {
