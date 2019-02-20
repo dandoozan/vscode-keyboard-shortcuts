@@ -17,13 +17,9 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:vks.selectString",
-        "onCommand:vks.deleteString",
-        "onCommand:vks.cutString",
-        "onCommand:vks.copyString",
-        "onCommand:vks.replaceString",
-        "onCommand:vks.selectBlockInner",
-        "onCommand:vks.selectParameter"
+        "onLanguage:javascript",
+        "onLanguage:typescript",
+        "onLanguage:json"
     ],
     "main": "./out/extension.js",
     "contributes": {

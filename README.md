@@ -23,6 +23,7 @@
 1. Create a Parser class for the language (eg. `class JsonParser extends Parser {...}`)
 2. In ParserFactory, add an entry for the language in `PARSER_CLASSES` (to map
    the language to the class) (eg. `json: JsonParser`)
+3. In package.json, add the language to the "activationEvents" (eg. `"onLanguage:json"`)
 
 ## Symlink vs. npm link the utils
 
