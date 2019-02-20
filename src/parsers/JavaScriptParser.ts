@@ -24,7 +24,8 @@ export default class JavaScriptParser extends Parser {
             nodes.push(
                 NodeFactory.createNode(
                     'string',
-                    new Boundary(start as number, end as number)
+                    new Boundary(start as number, end as number),
+                    this.editor
                 )
             );
         }
@@ -37,7 +38,8 @@ export default class JavaScriptParser extends Parser {
             nodes.push(
                 NodeFactory.createNode(
                     'block',
-                    new Boundary(start as number, end as number)
+                    new Boundary(start as number, end as number),
+                    this.editor
                 )
             );
         }
@@ -51,7 +53,8 @@ export default class JavaScriptParser extends Parser {
                     new Boundary(
                         paramNode.start as number,
                         paramNode.end as number
-                    )
+                    ),
+                    this.editor
                 )
             );
         }

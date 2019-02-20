@@ -6,7 +6,6 @@ import { isString, get } from 'lodash';
 import Node from '../nodes/Node';
 
 export default class JsonParser extends Parser {
-
     protected createStringNodes(astNode: any) {
         const nodes: Node[] = [];
         if (
@@ -15,7 +14,13 @@ export default class JsonParser extends Parser {
         ) {
             const start = get(astNode, 'loc.start.offset');
             const end = get(astNode, 'loc.end.offset');
-            nodes.push(NodeFactory.createNode('string', new Boundary(start, end)));
+            nodes.push(
+                NodeFactory.createNode(
+                    'string',
+                    new Boundary(start, end),
+                    this.editor
+                )
+            );
         }
         return nodes;
     }

@@ -20,7 +20,7 @@ export async function executeCommand(editor: TextEditor) {
     //todo: improve efficiency by persisting the parser between commands (right
     //now, I'm creating a new Parser each time a command is run, meaning the
     //file is re-parsed (ie. an AST is generated from the code) each time)
-    const parser = ParserFactory.createParser(language);
+    const parser = ParserFactory.createParser(language, editor);
 
     const cursors = getCursors(editor);
 
