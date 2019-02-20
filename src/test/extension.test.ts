@@ -65,7 +65,108 @@ async function runCommandInEditor(
     return editor;
 }
 
-describe('JavaScript', () => {
+describe('Select', () => {
+    const action = 'select';
+
+    const testCases = [
+        //strings
+        {
+            desc: 'should select string',
+            type: 'string',
+            language: 'javascript',
+            startingCode: `("Four score and seven years ago...")`,
+            cursorPosition: 2, //<-- just inside the opening quote
+            expectedSelections: [`Four score and seven years ago...`],
+        },
+        {
+            desc: 'should select template string',
+            type: 'string',
+            language: 'javascript',
+            startingCode: `(\`Four score and seven years ago...\`)`,
+            cursorPosition: 2, //<-- just inside the opening quote
+            expectedSelections: [`Four score and seven years ago...`],
+        },
+        {
+            desc: 'should select directive',
+            type: 'string',
+            language: 'javascript',
+            startingCode: `"Four score and seven years ago..."`,
+            cursorPosition: 1, //<-- just inside the opening quote
+            expectedSelections: [`Four score and seven years ago...`],
+        },
+        {
+            desc: 'should NOT select when cursor is not inside a string',
+            type: 'string',
+            language: 'javascript',
+            startingCode: `("Four score and seven years ago...")`,
+            cursorPosition: 0,
+            expectedSelections: [''],
+        },
+        {
+            desc:
+                'should select strings when multiple cursors are inside strings',
+            type: 'string',
+            language: 'javascript',
+            startingCode: '("Four score" + "and seven years ago...")',
+            cursorPosition: [2, 17],
+            expectedSelections: ['Four score', 'and seven years ago...'],
+        },
+
+        //blocks
+        {
+            desc: 'should select inner block',
+            type: 'block',
+            language: 'javascript',
+            startingCode: '({a:1})',
+            cursorPosition: 2,
+            expectedSelections: ['a:1'],
+        },
+        {
+            desc: 'should select inner block when it is multiline',
+            type: 'block',
+            language: 'javascript',
+            startingCode: '({\n' + '    a: 1,\n' + '    b: 2,\n' + '})',
+            cursorPosition: 2,
+            expectedSelections: ['    a: 1,\n' + '    b: 2,'],
+        },
+        {
+            desc: 'should NOT select when cursor is not inside a block',
+            type: 'block',
+            language: 'javascript',
+            startingCode: '({a:1})',
+            cursorPosition: 0,
+            expectedSelections: [''],
+        },
+    ];
+
+    for (const testCase of testCases) {
+        const {
+            desc,
+            type,
+            language,
+            startingCode,
+            cursorPosition,
+            expectedSelections,
+        } = testCase;
+
+        it(desc, async () => {
+            const editor = await runCommandInEditor(
+                startingCode,
+                cursorPosition,
+                action,
+                type,
+                language
+            );
+            const selections = getSelectedText(editor);
+            strictEqual(selections.length, expectedSelections.length);
+            selections.forEach((selection, i) => {
+                strictEqual(selection, expectedSelections[i]);
+            });
+        });
+    }
+});
+
+xdescribe('JavaScript', () => {
     const language = 'javascript';
     const stringContents = 'Four score and seven years ago...';
 
@@ -241,7 +342,7 @@ describe('JavaScript', () => {
     });
 });
 
-describe('JSON', () => {
+xdescribe('JSON', () => {
     const language = 'json';
 
     describe('selectString', () => {
