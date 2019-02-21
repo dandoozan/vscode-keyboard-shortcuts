@@ -47,45 +47,35 @@ export default {
                 testCases: [
                     {
                         desc: 'should select string',
-                        startingCode: `("Four score and seven years ago...")`,
+                        startingCode: `("String contents")`,
                         cursorPosition: 2, //<-- just inside the opening quote
-                        expectedSelections: [
-                            `Four score and seven years ago...`,
-                        ],
+                        expectedSelections: [`String contents`],
                     },
                     {
                         desc: 'should select template string',
-                        startingCode: `(\`Four score and seven years ago...\`)`,
+                        startingCode: `(\`Template string contents\`)`,
                         cursorPosition: 2, //<-- just inside the opening quote
-                        expectedSelections: [
-                            `Four score and seven years ago...`,
-                        ],
+                        expectedSelections: [`Template string contents`],
                     },
                     {
                         desc: 'should select directive',
-                        startingCode: `"Four score and seven years ago..."`,
+                        startingCode: `"use strict"`,
                         cursorPosition: 1, //<-- just inside the opening quote
-                        expectedSelections: [
-                            `Four score and seven years ago...`,
-                        ],
+                        expectedSelections: [`use strict`],
                     },
                     {
                         desc:
                             'should NOT select when cursor is not inside a string',
-                        startingCode: `("Four score and seven years ago...")`,
+                        startingCode: `("String contents")`,
                         cursorPosition: 0,
                         expectedSelections: [''],
                     },
                     {
                         desc:
                             'should select strings when multiple cursors are inside strings',
-                        startingCode:
-                            '("Four score" + "and seven years ago...")',
+                        startingCode: '("String1" + "String2")',
                         cursorPosition: [2, 17],
-                        expectedSelections: [
-                            'Four score',
-                            'and seven years ago...',
-                        ],
+                        expectedSelections: ['String1', 'String2'],
                     },
                 ],
             },
@@ -93,34 +83,33 @@ export default {
                 testCases: [
                     {
                         desc: 'should delete string',
-                        startingCode: `("Four score and seven years ago...")`,
+                        startingCode: `("String contents")`,
                         cursorPosition: 2, //<-- just inside the opening quote
                         endingCode: '("")',
                     },
                     {
                         desc: 'should delete template string',
-                        startingCode: `(\`Four score and seven years ago...\`)`,
+                        startingCode: `(\`Template string contents\`)`,
                         cursorPosition: 2, //<-- just inside the opening quote
                         endingCode: '(``)',
                     },
                     {
                         desc: 'should delete directive',
-                        startingCode: `"Four score and seven years ago..."`,
+                        startingCode: `"use strict"`,
                         cursorPosition: 1, //<-- just inside the opening quote
                         endingCode: '""',
                     },
                     {
                         desc:
                             'should NOT delete when cursor is not inside a string',
-                        startingCode: `("Four score and seven years ago...")`,
+                        startingCode: `("String contents")`,
                         cursorPosition: 0,
-                        endingCode: `("Four score and seven years ago...")`,
+                        endingCode: `("String contents")`,
                     },
                     {
                         desc:
                             'should delete strings when multiple cursors are inside strings',
-                        startingCode:
-                            '("Four score" + "and seven years ago...")',
+                        startingCode: '("String1" + "String2")',
                         cursorPosition: [2, 17],
                         endingCode: '("" + "")',
                     },
@@ -133,34 +122,33 @@ export default {
                 testCases: [
                     {
                         desc: 'should replace string',
-                        startingCode: `("Four score and seven years ago...")`,
+                        startingCode: `("String contents")`,
                         cursorPosition: 2, //<-- just inside the opening quote
                         endingCode: `("clipboardContent")`,
                     },
                     {
                         desc: 'should replace template string',
-                        startingCode: `(\`Four score and seven years ago...\`)`,
+                        startingCode: `(\`Template string\`)`,
                         cursorPosition: 2, //<-- just inside the opening quote
                         endingCode: `(\`clipboardContent\`)`,
                     },
                     {
                         desc: 'should replace directive',
-                        startingCode: `"Four score and seven years ago..."`,
+                        startingCode: `"use strict"`,
                         cursorPosition: 1, //<-- just inside the opening quote
                         endingCode: `"clipboardContent"`,
                     },
                     {
                         desc:
                             'should NOT replace when cursor is not inside a string',
-                        startingCode: `("Four score and seven years ago...")`,
+                        startingCode: `("String contents")`,
                         cursorPosition: 0,
-                        endingCode: `("Four score and seven years ago...")`,
+                        endingCode: `("String contents")`,
                     },
                     {
                         desc:
                             'should replace strings when multiple cursors are inside strings',
-                        startingCode:
-                            '("Four score" + "and seven years ago...")',
+                        startingCode: '("String1" + "String2")',
                         cursorPosition: [2, 17],
                         endingCode: `("clipboardContent" + "clipboardContent")`,
                     },
@@ -173,41 +161,40 @@ export default {
                 testCases: [
                     {
                         desc: 'should cut string',
-                        startingCode: `("Four score and seven years ago...")`,
+                        startingCode: `("String contents")`,
                         cursorPosition: 2, //<-- just inside the opening quote
                         endingCode: `("")`,
-                        expectedClipboardContent: `Four score and seven years ago...`,
+                        expectedClipboardContent: `String contents`,
                     },
                     {
                         desc: 'should cut template string',
-                        startingCode: `(\`Four score and seven years ago...\`)`,
+                        startingCode: `(\`Template string\`)`,
                         cursorPosition: 2, //<-- just inside the opening quote
                         endingCode: `(\`\`)`,
-                        expectedClipboardContent: `Four score and seven years ago...`,
+                        expectedClipboardContent: `Template string`,
                     },
                     {
                         desc: 'should cut directive',
-                        startingCode: `"Four score and seven years ago..."`,
+                        startingCode: `"use strict"`,
                         cursorPosition: 1, //<-- just inside the opening quote
                         endingCode: `""`,
-                        expectedClipboardContent: `Four score and seven years ago...`,
+                        expectedClipboardContent: `use strict`,
                     },
                     {
                         desc:
                             'should NOT cut when cursor is not inside a string',
-                        startingCode: `("Four score and seven years ago...")`,
+                        startingCode: `("String contents")`,
                         cursorPosition: 0,
-                        endingCode: `("Four score and seven years ago...")`,
+                        endingCode: `("String contents")`,
                         expectedClipboardContent: `PreviousClipboardContent`,
                     },
                     {
                         desc:
                             'should cut strings when multiple cursors are inside strings',
-                        startingCode:
-                            '("Four score" + "and seven years ago...")',
+                        startingCode: '("String1" + "String2")',
                         cursorPosition: [2, 17],
                         endingCode: `("" + "")`,
-                        expectedClipboardContent: `Four score\nand seven years ago...`,
+                        expectedClipboardContent: `String1\nString2`,
                     },
                 ],
             },
@@ -218,35 +205,29 @@ export default {
                 testCases: [
                     {
                         desc: 'should copy string',
-                        startingCode: `("Four score and seven years ago...")`,
+                        startingCode: `("String contents")`,
                         cursorPosition: 2, //<-- just inside the opening quote
-                        expectedSelections: [
-                            `Four score and seven years ago...`,
-                        ],
-                        expectedClipboardContent: `Four score and seven years ago...`,
+                        expectedSelections: [`String contents`],
+                        expectedClipboardContent: `String contents`,
                     },
                     {
                         desc: 'should copy template string',
-                        startingCode: `(\`Four score and seven years ago...\`)`,
+                        startingCode: `(\`Template string\`)`,
                         cursorPosition: 2, //<-- just inside the opening quote
-                        expectedSelections: [
-                            `Four score and seven years ago...`,
-                        ],
-                        expectedClipboardContent: `Four score and seven years ago...`,
+                        expectedSelections: [`Template string`],
+                        expectedClipboardContent: `Template string`,
                     },
                     {
                         desc: 'should copy directive',
-                        startingCode: `"Four score and seven years ago..."`,
+                        startingCode: `"use strict"`,
                         cursorPosition: 1, //<-- just inside the opening quote
-                        expectedSelections: [
-                            `Four score and seven years ago...`,
-                        ],
-                        expectedClipboardContent: `Four score and seven years ago...`,
+                        expectedSelections: [`use strict`],
+                        expectedClipboardContent: `use strict`,
                     },
                     {
                         desc:
                             'should NOT copy when cursor is not inside a string',
-                        startingCode: `("Four score and seven years ago...")`,
+                        startingCode: `("String contents")`,
                         cursorPosition: 0,
                         expectedSelections: [``],
                         expectedClipboardContent: `PreviousClipboardContent`,
@@ -254,14 +235,10 @@ export default {
                     {
                         desc:
                             'should copy strings when multiple cursors are inside strings',
-                        startingCode:
-                            '("Four score" + "and seven years ago...")',
+                        startingCode: '("String1" + "String2")',
                         cursorPosition: [2, 17],
-                        expectedSelections: [
-                            `Four score`,
-                            `and seven years ago...`,
-                        ],
-                        expectedClipboardContent: `Four score\nand seven years ago...`,
+                        expectedSelections: [`String1`, `String2`],
+                        expectedClipboardContent: `String1\nString2`,
                     },
                 ],
             },
