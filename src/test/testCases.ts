@@ -166,6 +166,51 @@ export default {
                     },
                 ],
             },
+            cut: {
+                beforeEach: () => {
+                    writeToClipboard('PreviousClipboardContent');
+                },
+                testCases: [
+                    {
+                        desc: 'should cut string',
+                        startingCode: `("Four score and seven years ago...")`,
+                        cursorPosition: 2, //<-- just inside the opening quote
+                        endingCode: `("")`,
+                        expectedClipboardContent: `Four score and seven years ago...`,
+                    },
+                    {
+                        desc: 'should cut template string',
+                        startingCode: `(\`Four score and seven years ago...\`)`,
+                        cursorPosition: 2, //<-- just inside the opening quote
+                        endingCode: `(\`\`)`,
+                        expectedClipboardContent: `Four score and seven years ago...`,
+                    },
+                    {
+                        desc: 'should cut directive',
+                        startingCode: `"Four score and seven years ago..."`,
+                        cursorPosition: 1, //<-- just inside the opening quote
+                        endingCode: `""`,
+                        expectedClipboardContent: `Four score and seven years ago...`,
+                    },
+                    {
+                        desc:
+                            'should NOT cut when cursor is not inside a string',
+                        startingCode: `("Four score and seven years ago...")`,
+                        cursorPosition: 0,
+                        endingCode: `("Four score and seven years ago...")`,
+                        expectedClipboardContent: `PreviousClipboardContent`,
+                    },
+                    {
+                        desc:
+                            'should cut strings when multiple cursors are inside strings',
+                        startingCode:
+                            '("Four score" + "and seven years ago...")',
+                        cursorPosition: [2, 17],
+                        endingCode: `("" + "")`,
+                        expectedClipboardContent: `Four score\nand seven years ago...`,
+                    },
+                ],
+            },
         },
     },
     json: {

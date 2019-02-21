@@ -1,7 +1,7 @@
 import { strictEqual } from 'assert';
 import { workspace, window, commands } from 'vscode';
 import { executeCommand } from '../extension';
-import { setCursor, getSelectedText } from '../utils';
+import { setCursor, getSelectedText, readFromClipboard } from '../utils';
 import testCases from './testCases';
 
 async function runCommandInEditor(language, type, action, testCase) {
@@ -26,6 +26,7 @@ const actionTests = {
     select: testSelect,
     delete: testDelete,
     replace: testReplace,
+    cut: testCut,
 };
 
 function testSelect(testCase, editor) {
@@ -44,6 +45,11 @@ function testDelete(testCase, editor) {
 function testReplace(testCase, editor) {
     const { endingCode } = testCase;
     strictEqual(editor.document.getText(), endingCode);
+}
+function testCut(testCase, editor) {
+    const { endingCode, expectedClipboardContent } = testCase;
+    strictEqual(editor.document.getText(), endingCode);
+    strictEqual(readFromClipboard(), expectedClipboardContent);
 }
 
 for (const language in testCases) {
