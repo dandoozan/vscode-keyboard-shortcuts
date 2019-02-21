@@ -220,21 +220,27 @@ export default {
                         desc: 'should copy string',
                         startingCode: `("Four score and seven years ago...")`,
                         cursorPosition: 2, //<-- just inside the opening quote
-                        expectedSelections: [`Four score and seven years ago...`],
+                        expectedSelections: [
+                            `Four score and seven years ago...`,
+                        ],
                         expectedClipboardContent: `Four score and seven years ago...`,
                     },
                     {
                         desc: 'should copy template string',
                         startingCode: `(\`Four score and seven years ago...\`)`,
                         cursorPosition: 2, //<-- just inside the opening quote
-                        expectedSelections: [`Four score and seven years ago...`],
+                        expectedSelections: [
+                            `Four score and seven years ago...`,
+                        ],
                         expectedClipboardContent: `Four score and seven years ago...`,
                     },
                     {
                         desc: 'should copy directive',
                         startingCode: `"Four score and seven years ago..."`,
                         cursorPosition: 1, //<-- just inside the opening quote
-                        expectedSelections: [`Four score and seven years ago...`],
+                        expectedSelections: [
+                            `Four score and seven years ago...`,
+                        ],
                         expectedClipboardContent: `Four score and seven years ago...`,
                     },
                     {
@@ -251,7 +257,10 @@ export default {
                         startingCode:
                             '("Four score" + "and seven years ago...")',
                         cursorPosition: [2, 17],
-                        expectedSelections: [`Four score`, `and seven years ago...`],
+                        expectedSelections: [
+                            `Four score`,
+                            `and seven years ago...`,
+                        ],
                         expectedClipboardContent: `Four score\nand seven years ago...`,
                     },
                 ],
@@ -268,17 +277,18 @@ export default {
                     },
                     {
                         desc: 'should select inner block when it is multiline',
-                        startingCode: '({\n' + '    a: 1,\n' + '    b: 2,\n' + '})',
+                        startingCode: '({\n    a: 1,\n    b: 2,\n})',
                         cursorPosition: 2,
-                        expectedSelections: ['    a: 1,\n' + '    b: 2,'],
+                        expectedSelections: ['    a: 1,\n    b: 2,'],
                     },
                     {
-                        desc: 'should NOT select when cursor is not inside a block',
+                        desc:
+                            'should NOT select when cursor is not inside a block',
                         startingCode: '({a:1})',
                         cursorPosition: 0,
                         expectedSelections: [''],
                     },
-                ]
+                ],
             },
             copy: {
                 beforeEach: () => {
@@ -300,15 +310,42 @@ export default {
                         expectedClipboardContent: '    a: 1,\n    b: 2,',
                     },
                     {
-                        desc: 'should NOT copy when cursor is not inside a block',
+                        desc:
+                            'should NOT copy when cursor is not inside a block',
                         startingCode: '({a:1})',
                         cursorPosition: 0,
                         expectedSelections: [''],
                         expectedClipboardContent: 'PreviousClipboardContent',
                     },
-                ]
+                ],
             },
-        }
+        },
+        parameter: {
+            select: {
+                testCases: [
+                    {
+                        desc: 'should select parameter',
+                        startingCode: `((param1) => {})`,
+                        cursorPosition: 2,
+                        expectedSelections: [`param1`],
+                    },
+                    {
+                        desc:
+                            'should NOT select when cursor is not inside a paramater',
+                        startingCode: `((param1) => {})`,
+                        cursorPosition: 0,
+                        expectedSelections: [''],
+                    },
+                    {
+                        desc:
+                            'should select parameters when multiple cursors are inside parameters',
+                        startingCode: '((param1, param2) => {})',
+                        cursorPosition: [2, 10],
+                        expectedSelections: ['param1', 'param2'],
+                    },
+                ],
+            },
+        },
     },
     json: {
         string: {
