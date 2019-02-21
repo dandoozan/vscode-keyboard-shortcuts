@@ -279,7 +279,35 @@ export default {
                         expectedSelections: [''],
                     },
                 ]
-            }
+            },
+            copy: {
+                beforeEach: () => {
+                    writeToClipboard('PreviousClipboardContent');
+                },
+                testCases: [
+                    {
+                        desc: 'should copy inner block',
+                        startingCode: '({a:1})',
+                        cursorPosition: 2,
+                        expectedSelections: ['a:1'],
+                        expectedClipboardContent: 'a:1',
+                    },
+                    {
+                        desc: 'should copy inner block when it is multiline',
+                        startingCode: '({\n    a: 1,\n    b: 2,\n})',
+                        cursorPosition: 2,
+                        expectedSelections: ['    a: 1,\n    b: 2,'],
+                        expectedClipboardContent: '    a: 1,\n    b: 2,',
+                    },
+                    {
+                        desc: 'should NOT copy when cursor is not inside a block',
+                        startingCode: '({a:1})',
+                        cursorPosition: 0,
+                        expectedSelections: [''],
+                        expectedClipboardContent: 'PreviousClipboardContent',
+                    },
+                ]
+            },
         }
     },
     json: {
