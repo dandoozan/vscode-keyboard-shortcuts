@@ -6,7 +6,6 @@ import testCases from './testCases';
 
 async function runCommandInEditor(language, type, action, testCase) {
     const { startingCode, cursorPosition } = testCase;
-
     const doc = await workspace.openTextDocument({
         content: startingCode,
         language,
@@ -23,34 +22,39 @@ async function runCommandInEditor(language, type, action, testCase) {
 }
 
 const actionTests = {
-    select: testSelect,
-    delete: testDelete,
-    replace: testReplace,
-    cut: testCut,
+    select: ({ expectedSelections }, editor) => {
+        checkSelections(expectedSelections, editor);
+    },
+    delete: ({ endingCode }, editor) => {
+        checkFileText(endingCode, editor);
+    },
+    replace: ({ endingCode }, editor) => {
+        checkFileText(endingCode, editor);
+    },
+    cut: ({ expectedClipboardContent, endingCode }, editor) => {
+        checkClipboardContent(expectedClipboardContent);
+        checkFileText(endingCode, editor);
+    },
+    copy: ({ expectedClipboardContent, expectedSelections }, editor) => {
+        checkClipboardContent(expectedClipboardContent);
+        checkSelections(expectedSelections, editor);
+    },
 };
 
-function testSelect(testCase, editor) {
-    const { expectedSelections } = testCase;
+function checkSelections(expectedSelections, editor) {
     const selections = getSelectedText(editor);
     strictEqual(selections.length, expectedSelections.length);
     selections.forEach((selection, i) => {
         strictEqual(selection, expectedSelections[i]);
     });
 }
-
-function testDelete(testCase, editor) {
-    const { endingCode } = testCase;
-    strictEqual(editor.document.getText(), endingCode);
+function checkFileText(expectedFileText, editor) {
+    strictEqual(editor.document.getText(), expectedFileText);
 }
-function testReplace(testCase, editor) {
-    const { endingCode } = testCase;
-    strictEqual(editor.document.getText(), endingCode);
-}
-function testCut(testCase, editor) {
-    const { endingCode, expectedClipboardContent } = testCase;
-    strictEqual(editor.document.getText(), endingCode);
+function checkClipboardContent(expectedClipboardContent) {
     strictEqual(readFromClipboard(), expectedClipboardContent);
 }
+
 
 for (const language in testCases) {
     describe(language, () => {

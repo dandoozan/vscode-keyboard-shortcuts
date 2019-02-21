@@ -211,6 +211,51 @@ export default {
                     },
                 ],
             },
+            copy: {
+                beforeEach: () => {
+                    writeToClipboard('PreviousClipboardContent');
+                },
+                testCases: [
+                    {
+                        desc: 'should copy string',
+                        startingCode: `("Four score and seven years ago...")`,
+                        cursorPosition: 2, //<-- just inside the opening quote
+                        expectedSelections: [`Four score and seven years ago...`],
+                        expectedClipboardContent: `Four score and seven years ago...`,
+                    },
+                    {
+                        desc: 'should copy template string',
+                        startingCode: `(\`Four score and seven years ago...\`)`,
+                        cursorPosition: 2, //<-- just inside the opening quote
+                        expectedSelections: [`Four score and seven years ago...`],
+                        expectedClipboardContent: `Four score and seven years ago...`,
+                    },
+                    {
+                        desc: 'should copy directive',
+                        startingCode: `"Four score and seven years ago..."`,
+                        cursorPosition: 1, //<-- just inside the opening quote
+                        expectedSelections: [`Four score and seven years ago...`],
+                        expectedClipboardContent: `Four score and seven years ago...`,
+                    },
+                    {
+                        desc:
+                            'should NOT copy when cursor is not inside a string',
+                        startingCode: `("Four score and seven years ago...")`,
+                        cursorPosition: 0,
+                        expectedSelections: [``],
+                        expectedClipboardContent: `PreviousClipboardContent`,
+                    },
+                    {
+                        desc:
+                            'should copy strings when multiple cursors are inside strings',
+                        startingCode:
+                            '("Four score" + "and seven years ago...")',
+                        cursorPosition: [2, 17],
+                        expectedSelections: [`Four score`, `and seven years ago...`],
+                        expectedClipboardContent: `Four score\nand seven years ago...`,
+                    },
+                ],
+            },
         },
     },
     json: {
