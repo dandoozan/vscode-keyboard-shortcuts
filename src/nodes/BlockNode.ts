@@ -8,8 +8,6 @@ export default class BlockNode extends Node {
     }
 
     getActionBoundary(action: string) {
-        return new Boundary(this.boundary.start + 1, this.boundary.end - 1);
+        return this.boundary;
     }
-
-
 }

@@ -243,6 +243,32 @@ export default {
                 ],
             },
         },
+        block: {
+            select: {
+                testCases: [
+                    {
+                        desc: 'should select block',
+                        startingCode: 'function foo(){}',
+                        cursorPosition: 0,
+                        expectedSelections: ['function foo(){}'],
+                    },
+                    {
+                        desc:
+                            'should NOT select when cursor is not inside a block',
+                        startingCode: ' function foo(){}',
+                        cursorPosition: 0,
+                        expectedSelections: [''],
+                    },
+                    {
+                        desc:
+                            'should select blocks when multiple cursors are inside blocks',
+                        startingCode: 'function foo(){}\nfunction bar(){}',
+                        cursorPosition: [0, 18],
+                        expectedSelections: ['function foo(){}', 'function bar(){}'],
+                    },
+                ],
+            }
+        },
         inner_block: {
             select: {
                 testCases: [

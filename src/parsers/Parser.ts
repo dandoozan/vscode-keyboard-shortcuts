@@ -1,10 +1,10 @@
-import { maxBy, fromPairs } from 'lodash';
+import { maxBy, fromPairs, isArray } from 'lodash';
 import Node from '../nodes/Node';
 import { TextEditor } from 'vscode';
 
 export default abstract class Parser {
-    editor: TextEditor
-    typeCreators: Object = {}
+    editor: TextEditor;
+    typeCreators: Object = {};
     constructor(editor: TextEditor) {
         this.editor = editor;
     }
@@ -15,22 +15,26 @@ export default abstract class Parser {
     private parseCode(code: string) {
         //initialize nodesByType as an object with keys as the types and values
         //as empty arrays.  For example: { string: [], block: [] }
-        const nodesByType = fromPairs(Object.keys(this.typeCreators).map((key) => [key, []]))
+        const nodesByType = fromPairs(
+            Object.keys(this.typeCreators).map(key => [key, []])
+        );
 
         const ast = this.generateAst(code);
         if (ast) {
             this.traverseAst(ast, (astNode: any) => {
                 for (const type in this.typeCreators) {
                     if (this.typeCreators.hasOwnProperty(type)) {
-                        const nodes = this.typeCreators[type].call(
-                            this,
-                            astNode
-                        );
+                        let nodes = this.typeCreators[type].call(this, astNode);
 
-                        //add all nodes
-                        nodes.forEach(node => {
-                            nodesByType[type].push(node);
-                        });
+                        if (nodes) {
+                            //convert nodes to an array if necessary
+                            nodes = isArray(nodes) ? nodes : [nodes];
+
+                            //add all nodes
+                            nodes.forEach(node => {
+                                nodesByType[type].push(node);
+                            });
+                        }
                     }
                 }
             });

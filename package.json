@@ -65,6 +65,38 @@
                 }
             },
             {
+                "command": "vks.selectBlock",
+                "title": "VKS: Select Block",
+                "data": {
+                    "type": "block",
+                    "action": "select"
+                }
+            },
+            {
+                "command": "vks.deleteBlock",
+                "title": "VKS: Delete Block",
+                "data": {
+                    "type": "block",
+                    "action": "delete"
+                }
+            },
+            {
+                "command": "vks.cutBlock",
+                "title": "VKS: Cut Block",
+                "data": {
+                    "type": "block",
+                    "action": "cut"
+                }
+            },
+            {
+                "command": "vks.copyBlock",
+                "title": "VKS: Copy Block",
+                "data": {
+                    "type": "block",
+                    "action": "copy"
+                }
+            },
+            {
                 "command": "vks.selectInnerBlock",
                 "title": "VKS: Select Inner Block",
                 "data": {

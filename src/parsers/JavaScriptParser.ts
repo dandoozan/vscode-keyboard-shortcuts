@@ -10,7 +10,6 @@ import {
     isObjectExpression,
     isFunction,
 } from '@babel/types';
-import Node from '../nodes/Node';
 
 export default class JavaScriptParser extends Parser {
     typeCreators = {
@@ -20,56 +19,41 @@ export default class JavaScriptParser extends Parser {
         parameter: this.createParameterNodes,
     };
 
+    createNode(type: string, astNode: any) {
+        const { start, end } = astNode;
+        return NodeFactory.createNode(
+            type,
+            new Boundary(start as number, end as number),
+            this.editor
+        );
+    }
+
     createStringNodes(astNode: any) {
-        const nodes: Node[] = [];
         if (
             isStringLiteral(astNode) ||
             isTemplateLiteral(astNode) ||
             isDirective(astNode)
         ) {
-            const { start, end } = astNode;
-            nodes.push(
-                NodeFactory.createNode(
-                    'string',
-                    new Boundary(start as number, end as number),
-                    this.editor
-                )
-            );
+            return this.createNode('string', astNode);
         }
-        return nodes;
     }
     createBlockNodes(astNode: any) {
-        const nodes: Node[] = [];
-        return nodes;
+        //first, check if the ast node has a "body" and that it's a "BlockStatement"
+        if (isBlockStatement(astNode.body)) {
+            return this.createNode('block', astNode);
+        }
     }
     createInnerBlockNodes(astNode: any) {
-        const nodes: Node[] = [];
         if (isBlockStatement(astNode) || isObjectExpression(astNode)) {
-            const { start, end } = astNode;
-            nodes.push(
-                NodeFactory.createNode(
-                    'inner_block',
-                    new Boundary(start as number, end as number),
-                    this.editor
-                )
-            );
+            return this.createNode('inner_block', astNode);
         }
-        return nodes;
     }
     createParameterNodes(astNode: any) {
         if (isFunction(astNode)) {
             return astNode.params.map(paramNode =>
-                NodeFactory.createNode(
-                    'parameter',
-                    new Boundary(
-                        paramNode.start as number,
-                        paramNode.end as number
-                    ),
-                    this.editor
-                )
+                this.createNode('parameter', paramNode)
             );
         }
-        return [];
     }
 
     generateAst(code: string) {
