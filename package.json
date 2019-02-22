@@ -87,6 +87,38 @@
                     "type": "parameter",
                     "action": "select"
                 }
+            },
+            {
+                "command": "vks.deleteParameter",
+                "title": "VKS: Delete Parameter",
+                "data": {
+                    "type": "parameter",
+                    "action": "delete"
+                }
+            },
+            {
+                "command": "vks.cutParameter",
+                "title": "VKS: Cut Parameter",
+                "data": {
+                    "type": "parameter",
+                    "action": "cut"
+                }
+            },
+            {
+                "command": "vks.copyParameter",
+                "title": "VKS: Copy Parameter",
+                "data": {
+                    "type": "parameter",
+                    "action": "copy"
+                }
+            },
+            {
+                "command": "vks.replaceParameter",
+                "title": "VKS: Replace Parameter",
+                "data": {
+                    "type": "parameter",
+                    "action": "replace"
+                }
             }
         ]
     },

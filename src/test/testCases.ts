@@ -48,19 +48,19 @@ export default {
                     {
                         desc: 'should select string',
                         startingCode: `("String contents")`,
-                        cursorPosition: 2, //<-- just inside the opening quote
+                        cursorPosition: 2,
                         expectedSelections: [`String contents`],
                     },
                     {
                         desc: 'should select template string',
                         startingCode: `(\`Template string contents\`)`,
-                        cursorPosition: 2, //<-- just inside the opening quote
+                        cursorPosition: 2,
                         expectedSelections: [`Template string contents`],
                     },
                     {
                         desc: 'should select directive',
                         startingCode: `"use strict"`,
-                        cursorPosition: 1, //<-- just inside the opening quote
+                        cursorPosition: 1,
                         expectedSelections: [`use strict`],
                     },
                     {
@@ -84,19 +84,19 @@ export default {
                     {
                         desc: 'should delete string',
                         startingCode: `("String contents")`,
-                        cursorPosition: 2, //<-- just inside the opening quote
+                        cursorPosition: 2,
                         endingCode: '("")',
                     },
                     {
                         desc: 'should delete template string',
                         startingCode: `(\`Template string contents\`)`,
-                        cursorPosition: 2, //<-- just inside the opening quote
+                        cursorPosition: 2,
                         endingCode: '(``)',
                     },
                     {
                         desc: 'should delete directive',
                         startingCode: `"use strict"`,
-                        cursorPosition: 1, //<-- just inside the opening quote
+                        cursorPosition: 1,
                         endingCode: '""',
                     },
                     {
@@ -123,21 +123,21 @@ export default {
                     {
                         desc: 'should cut string',
                         startingCode: `("String contents")`,
-                        cursorPosition: 2, //<-- just inside the opening quote
+                        cursorPosition: 2,
                         endingCode: `("")`,
                         expectedClipboardContent: `String contents`,
                     },
                     {
                         desc: 'should cut template string',
                         startingCode: `(\`Template string\`)`,
-                        cursorPosition: 2, //<-- just inside the opening quote
+                        cursorPosition: 2,
                         endingCode: `(\`\`)`,
                         expectedClipboardContent: `Template string`,
                     },
                     {
                         desc: 'should cut directive',
                         startingCode: `"use strict"`,
-                        cursorPosition: 1, //<-- just inside the opening quote
+                        cursorPosition: 1,
                         endingCode: `""`,
                         expectedClipboardContent: `use strict`,
                     },
@@ -167,21 +167,21 @@ export default {
                     {
                         desc: 'should copy string',
                         startingCode: `("String contents")`,
-                        cursorPosition: 2, //<-- just inside the opening quote
+                        cursorPosition: 2,
                         expectedSelections: [`String contents`],
                         expectedClipboardContent: `String contents`,
                     },
                     {
                         desc: 'should copy template string',
                         startingCode: `(\`Template string\`)`,
-                        cursorPosition: 2, //<-- just inside the opening quote
+                        cursorPosition: 2,
                         expectedSelections: [`Template string`],
                         expectedClipboardContent: `Template string`,
                     },
                     {
                         desc: 'should copy directive',
                         startingCode: `"use strict"`,
-                        cursorPosition: 1, //<-- just inside the opening quote
+                        cursorPosition: 1,
                         expectedSelections: [`use strict`],
                         expectedClipboardContent: `use strict`,
                     },
@@ -205,26 +205,26 @@ export default {
             },
             replace: {
                 beforeEach: () => {
-                    writeToClipboard('clipboardContent');
+                    writeToClipboard('ClipboardContent');
                 },
                 testCases: [
                     {
                         desc: 'should replace string',
                         startingCode: `("String contents")`,
-                        cursorPosition: 2, //<-- just inside the opening quote
-                        endingCode: `("clipboardContent")`,
+                        cursorPosition: 2,
+                        endingCode: `("ClipboardContent")`,
                     },
                     {
                         desc: 'should replace template string',
                         startingCode: `(\`Template string\`)`,
-                        cursorPosition: 2, //<-- just inside the opening quote
-                        endingCode: `(\`clipboardContent\`)`,
+                        cursorPosition: 2,
+                        endingCode: `(\`ClipboardContent\`)`,
                     },
                     {
                         desc: 'should replace directive',
                         startingCode: `"use strict"`,
-                        cursorPosition: 1, //<-- just inside the opening quote
-                        endingCode: `"clipboardContent"`,
+                        cursorPosition: 1,
+                        endingCode: `"ClipboardContent"`,
                     },
                     {
                         desc:
@@ -238,7 +238,7 @@ export default {
                             'should replace strings when multiple cursors are inside strings',
                         startingCode: '("String1" + "String2")',
                         cursorPosition: [2, 17],
-                        endingCode: `("clipboardContent" + "clipboardContent")`,
+                        endingCode: `("ClipboardContent" + "ClipboardContent")`,
                     },
                 ],
             },
@@ -334,6 +334,117 @@ export default {
                         startingCode: '((param1, param2) => {})',
                         cursorPosition: [2, 10],
                         expectedSelections: ['param1', 'param2'],
+                    },
+                ],
+            },
+            delete: {
+                testCases: [
+                    {
+                        desc: 'should delete parameter',
+                        startingCode: '((param1) => {})',
+                        cursorPosition: 2,
+                        endingCode: '(() => {})',
+                    },
+                    {
+                        desc:
+                            'should NOT delete when cursor is not inside a parameter',
+                        startingCode: '((param1) => {})',
+                        cursorPosition: 0,
+                        endingCode: '((param1) => {})',
+                    },
+                    {
+                        desc:
+                            'should delete parameters when multiple cursors are inside parameters',
+                        startingCode: '((param1, param2) => {})',
+                        cursorPosition: [2, 10],
+                        endingCode: '((, ) => {})',
+                    },
+                ],
+            },
+            cut: {
+                beforeEach: () => {
+                    writeToClipboard('PreviousClipboardContent');
+                },
+                testCases: [
+                    {
+                        desc: 'should cut parameter',
+                        startingCode: `((param1) => {})`,
+                        cursorPosition: 2,
+                        endingCode: `(() => {})`,
+                        expectedClipboardContent: `param1`,
+                    },
+                    {
+                        desc:
+                            'should NOT cut when cursor is not inside a parameter',
+                        startingCode: `((param1) => {})`,
+                        cursorPosition: 0,
+                        endingCode: `((param1) => {})`,
+                        expectedClipboardContent: `PreviousClipboardContent`,
+                    },
+                    {
+                        desc:
+                            'should cut parameters when multiple cursors are inside parameters',
+                        startingCode: '((param1, param2) => {})',
+                        cursorPosition: [2, 10],
+                        endingCode: `((, ) => {})`,
+                        expectedClipboardContent: `param1\nparam2`,
+                    },
+                ],
+            },
+            copy: {
+                beforeEach: () => {
+                    writeToClipboard('PreviousClipboardContent');
+                },
+                testCases: [
+                    {
+                        desc: 'should copy parameter',
+                        startingCode: `((param1) => {})`,
+                        cursorPosition: 2,
+                        expectedSelections: [`param1`],
+                        expectedClipboardContent: `param1`,
+                    },
+                    {
+                        desc:
+                            'should NOT copy when cursor is not inside a parameter',
+                        startingCode: `((param1) => {})`,
+                        cursorPosition: 0,
+                        expectedSelections: [``],
+                        expectedClipboardContent: `PreviousClipboardContent`,
+                    },
+                    {
+                        desc:
+                            'should copy parameters when multiple cursors are inside parameters',
+                        startingCode: '((param1, param2) => {})',
+                        cursorPosition: [2, 10],
+                        expectedSelections: [`param1`, `param2`],
+                        expectedClipboardContent: `param1\nparam2`,
+                    },
+                ],
+            },
+            replace: {
+                beforeEach: () => {
+                    writeToClipboard('ClipboardContent');
+                },
+                testCases: [
+                    {
+                        desc: 'should replace parameter',
+                        startingCode: `((param1) => {})`,
+                        cursorPosition: 2,
+                        endingCode: `((ClipboardContent) => {})`,
+                    },
+                    {
+                        desc:
+                            'should NOT replace when cursor is not inside a parameter',
+                        startingCode: `((param1) => {})`,
+                        cursorPosition: 0,
+                        endingCode: `((param1) => {})`,
+                    },
+                    {
+                        desc:
+                            'should replace parameters when multiple cursors are inside parameters',
+                        startingCode: '((param1, param2) => {})',
+                        cursorPosition: [2, 10],
+                        endingCode: `((ClipboardContent, ClipboardContent) => {})`,
                     },
                 ],
             },
