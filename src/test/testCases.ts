@@ -115,45 +115,6 @@ export default {
                     },
                 ],
             },
-            replace: {
-                beforeEach: () => {
-                    writeToClipboard('clipboardContent');
-                },
-                testCases: [
-                    {
-                        desc: 'should replace string',
-                        startingCode: `("String contents")`,
-                        cursorPosition: 2, //<-- just inside the opening quote
-                        endingCode: `("clipboardContent")`,
-                    },
-                    {
-                        desc: 'should replace template string',
-                        startingCode: `(\`Template string\`)`,
-                        cursorPosition: 2, //<-- just inside the opening quote
-                        endingCode: `(\`clipboardContent\`)`,
-                    },
-                    {
-                        desc: 'should replace directive',
-                        startingCode: `"use strict"`,
-                        cursorPosition: 1, //<-- just inside the opening quote
-                        endingCode: `"clipboardContent"`,
-                    },
-                    {
-                        desc:
-                            'should NOT replace when cursor is not inside a string',
-                        startingCode: `("String contents")`,
-                        cursorPosition: 0,
-                        endingCode: `("String contents")`,
-                    },
-                    {
-                        desc:
-                            'should replace strings when multiple cursors are inside strings',
-                        startingCode: '("String1" + "String2")',
-                        cursorPosition: [2, 17],
-                        endingCode: `("clipboardContent" + "clipboardContent")`,
-                    },
-                ],
-            },
             cut: {
                 beforeEach: () => {
                     writeToClipboard('PreviousClipboardContent');
@@ -239,6 +200,45 @@ export default {
                         cursorPosition: [2, 17],
                         expectedSelections: [`String1`, `String2`],
                         expectedClipboardContent: `String1\nString2`,
+                    },
+                ],
+            },
+            replace: {
+                beforeEach: () => {
+                    writeToClipboard('clipboardContent');
+                },
+                testCases: [
+                    {
+                        desc: 'should replace string',
+                        startingCode: `("String contents")`,
+                        cursorPosition: 2, //<-- just inside the opening quote
+                        endingCode: `("clipboardContent")`,
+                    },
+                    {
+                        desc: 'should replace template string',
+                        startingCode: `(\`Template string\`)`,
+                        cursorPosition: 2, //<-- just inside the opening quote
+                        endingCode: `(\`clipboardContent\`)`,
+                    },
+                    {
+                        desc: 'should replace directive',
+                        startingCode: `"use strict"`,
+                        cursorPosition: 1, //<-- just inside the opening quote
+                        endingCode: `"clipboardContent"`,
+                    },
+                    {
+                        desc:
+                            'should NOT replace when cursor is not inside a string',
+                        startingCode: `("String contents")`,
+                        cursorPosition: 0,
+                        endingCode: `("String contents")`,
+                    },
+                    {
+                        desc:
+                            'should replace strings when multiple cursors are inside strings',
+                        startingCode: '("String1" + "String2")',
+                        cursorPosition: [2, 17],
+                        endingCode: `("clipboardContent" + "clipboardContent")`,
                     },
                 ],
             },
