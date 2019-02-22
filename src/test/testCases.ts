@@ -265,6 +265,13 @@ export default {
                         cursorPosition: 0,
                         expectedSelections: [''],
                     },
+                    {
+                        desc:
+                            'should select inner blocks when multiple cursors are inside inner blocks',
+                        startingCode: '({a:1})\n({b:2})',
+                        cursorPosition: [2, 10],
+                        expectedSelections: ['a:1', 'b:2'],
+                    },
                 ],
             },
             copy: {
@@ -293,6 +300,14 @@ export default {
                         cursorPosition: 0,
                         expectedSelections: [''],
                         expectedClipboardContent: 'PreviousClipboardContent',
+                    },
+                    {
+                        desc:
+                            'should copy inner blocks when multiple cursors are inside inner blocks',
+                        startingCode: '({a:1})\n({b:2})',
+                        cursorPosition: [2, 10],
+                        expectedSelections: [`a:1`, `b:2`],
+                        expectedClipboardContent: `a:1\nb:2`,
                     },
                 ],
             },
