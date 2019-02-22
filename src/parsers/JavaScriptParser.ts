@@ -9,6 +9,7 @@ import {
     isBlockStatement,
     isObjectExpression,
     isFunction,
+    Node,
 } from '@babel/types';
 
 export default class JavaScriptParser extends Parser {
@@ -19,7 +20,7 @@ export default class JavaScriptParser extends Parser {
         parameter: this.createParameterNodes,
     };
 
-    createNode(type: string, astNode: any) {
+    createNode(type: string, astNode: Node) {
         const { start, end } = astNode;
         return NodeFactory.createNode(
             type,
@@ -28,7 +29,7 @@ export default class JavaScriptParser extends Parser {
         );
     }
 
-    createStringNodes(astNode: any) {
+    createStringNodes(astNode: Node) {
         if (
             isStringLiteral(astNode) ||
             isTemplateLiteral(astNode) ||
@@ -37,18 +38,23 @@ export default class JavaScriptParser extends Parser {
             return this.createNode('string', astNode);
         }
     }
-    createBlockNodes(astNode: any) {
-        //first, check if the ast node has a "body" and that it's a "BlockStatement"
-        if (isBlockStatement(astNode.body)) {
-            return this.createNode('block', astNode);
+    createBlockNodes(astNode: Node) {
+        //check all the children of astNode to see if any are a "BlockStatement"
+        for (const key in astNode) {
+            if (astNode.hasOwnProperty(key)) {
+                const value = astNode[key];
+                if (isBlockStatement(value)){// || isObjectExpression(value)) {
+                    return this.createNode('block', astNode);
+                }
+            }
         }
     }
-    createInnerBlockNodes(astNode: any) {
+    createInnerBlockNodes(astNode: Node) {
         if (isBlockStatement(astNode) || isObjectExpression(astNode)) {
             return this.createNode('inner_block', astNode);
         }
     }
-    createParameterNodes(astNode: any) {
+    createParameterNodes(astNode: Node) {
         if (isFunction(astNode)) {
             return astNode.params.map(paramNode =>
                 this.createNode('parameter', paramNode)
@@ -59,7 +65,7 @@ export default class JavaScriptParser extends Parser {
     generateAst(code: string) {
         return generateBabelAst(code);
     }
-    traverseAst(astNode: any, fnToApplyToEveryNode: Function) {
+    traverseAst(astNode: Node, fnToApplyToEveryNode: Function) {
         traverseBabelAst(astNode, fnToApplyToEveryNode.bind(this));
     }
 }
