@@ -6,28 +6,25 @@ import {
     TextEditor,
     TextEditorEdit,
     Range,
+    languages,
 } from 'vscode';
 import { executeCommand } from '../extension';
 import { setCursor, getSelectedText, readFromClipboard } from '../utils';
 import testCases from './testCases';
+import { once } from 'lodash';
 
-const EDITORS = {};
+async function createEditor() {
+    const doc = await workspace.openTextDocument();
 
-async function getEditorForLanguage(language: string) {
-    if (!EDITORS[language]) {
-        const doc = await workspace.openTextDocument({
-            content: '',
-            language,
-        });
+    //show the editor so that it's the "activeTextEditor"
+    const editor = await window.showTextDocument(doc);
 
-        //show the editor so that it's the "activeTextEditor"
-        const editor = await window.showTextDocument(doc);
-
-        //cache it in EDITORS
-        EDITORS[language] = editor;
-    }
-    return EDITORS[language];
+    return editor;
 }
+
+const getEditor = once(async function getEditor() {
+    return await createEditor();
+});
 
 async function setEditorText(editor: TextEditor, newText: string) {
     const oldTextRange = new Range(
@@ -39,9 +36,16 @@ async function setEditorText(editor: TextEditor, newText: string) {
     });
 }
 
-async function runCommandInEditor(type: string, action: string, testCase, editor: TextEditor) {
+async function runCommandInEditor(
+    language: string,
+    type: string,
+    action: string,
+    testCase,
+    editor: TextEditor
+) {
     const { startingCode, cursorPosition } = testCase;
 
+    await languages.setTextDocumentLanguage(editor.document, language);
     await setEditorText(editor, startingCode);
     await setCursor(editor, cursorPosition);
 
@@ -98,8 +102,9 @@ for (const language in testCases) {
                         }
                         for (const testCase of obj.testCases) {
                             it(testCase.desc, async () => {
-                                const editor = await getEditorForLanguage(language);
+                                const editor = await getEditor();
                                 await runCommandInEditor(
+                                    language,
                                     type,
                                     action,
                                     testCase,
@@ -114,3 +119,4 @@ for (const language in testCases) {
         }
     });
 }
+
