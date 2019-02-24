@@ -14,7 +14,7 @@ import { memoize } from 'lodash';
 
 async function createEditor(language: string) {
     const doc = await workspace.openTextDocument({
-        language
+        language,
     });
 
     //show the editor so that it's the "activeTextEditor"
@@ -90,31 +90,42 @@ function checkClipboardContent(expectedClipboardContent) {
 }
 
 for (const language in testCases) {
-    describe(language, () => {
-        for (const type in testCases[language]) {
-            describe(type, () => {
-                for (const action in testCases[language][type]) {
-                    describe(action, () => {
-                        const obj = testCases[language][type][action];
-                        if (obj.beforeEach) {
-                            beforeEach(obj.beforeEach);
-                        }
-                        for (const testCase of obj.testCases) {
-                            it(testCase.desc, async () => {
-                                const editor = await getEditorForLanguage(language);
-                                await runCommandInEditor(
-                                    type,
-                                    action,
-                                    testCase,
-                                    editor
-                                );
-                                actionTests[action](testCase, editor);
-                            });
+    if (!language.startsWith('x')) {
+        describe(language, () => {
+            for (const type in testCases[language]) {
+                if (!type.startsWith('x')) {
+                    describe(type, () => {
+                        for (const action in testCases[language][type]) {
+                            if (!action.startsWith('x')) {
+                                describe(action, () => {
+                                    const obj =
+                                        testCases[language][type][action];
+                                    if (obj.beforeEach) {
+                                        beforeEach(obj.beforeEach);
+                                    }
+                                    for (const testCase of obj.testCases) {
+                                        it(testCase.desc, async () => {
+                                            const editor = await getEditorForLanguage(
+                                                language
+                                            );
+                                            await runCommandInEditor(
+                                                type,
+                                                action,
+                                                testCase,
+                                                editor
+                                            );
+                                            actionTests[action](
+                                                testCase,
+                                                editor
+                                            );
+                                        });
+                                    }
+                                });
+                            }
                         }
                     });
                 }
-            });
-        }
-    });
+            }
+        });
+    }
 }
-
