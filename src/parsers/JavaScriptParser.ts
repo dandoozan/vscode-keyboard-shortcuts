@@ -10,7 +10,14 @@ import {
     isObjectExpression,
     isFunction,
     Node,
+    isVariableDeclaration,
+    isArrayExpression,
+    isFunctionExpression,
+    isVariableDeclarator,
+    isExpressionStatement,
+    isArrowFunctionExpression,
 } from '@babel/types';
+import { get } from 'lodash';
 
 export default class JavaScriptParser extends Parser {
     typeCreators = {
@@ -39,15 +46,60 @@ export default class JavaScriptParser extends Parser {
         }
     }
     createBlockNodes(astNode: Node) {
-        //check all the children of astNode to see if any are a "BlockStatement"
-        for (const key in astNode) {
-            if (astNode.hasOwnProperty(key)) {
-                const value = astNode[key];
-                if (isBlockStatement(value)){// || isObjectExpression(value)) {
-                    return this.createNode('block', astNode);
+        let isBlock = false;
+
+        //include all ExpressionStatements
+        if (isExpressionStatement(astNode)) {
+            isBlock = true;
+        }
+
+        //include any ast node that has a child that is an object, array, or block
+        //except for VariableDeclarations or FunctionExpressions
+        if (
+            !(
+                isVariableDeclarator(astNode) ||
+                isFunctionExpression(astNode) ||
+                isArrowFunctionExpression(astNode)
+            )
+        ) {
+            for (const key in astNode) {
+                if (astNode.hasOwnProperty(key)) {
+                    const value = astNode[key];
+                    if (
+                        isObjectExpression(value) ||
+                        isArrayExpression(value) ||
+                        isBlockStatement(value)
+                    ) {
+                        isBlock = true;
+                    }
                 }
             }
         }
+
+        //handle variables
+        if (isVariableDeclaration(astNode)) {
+            let declarationInit = get(astNode, 'declarations[0].init');
+            if (
+                isObjectExpression(declarationInit) || //objects
+                isArrayExpression(declarationInit) || //arrays
+                isFunctionExpression(declarationInit) //functions
+            ) {
+                isBlock = true;
+            }
+        }
+
+        if (isBlock) {
+            return this.createNode('block', astNode);
+        }
+
+        // if (
+        //     isFunctionDeclaration(astNode) ||
+        //     isForStatement(astNode) ||
+        //     isWhileStatement(astNode) ||
+        //     isIfStatement(astNode)
+        // ) {
+        //     return this.createNode('block', astNode);
+        // }
     }
     createInnerBlockNodes(astNode: Node) {
         if (isBlockStatement(astNode) || isObjectExpression(astNode)) {

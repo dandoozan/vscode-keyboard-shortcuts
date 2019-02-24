@@ -248,23 +248,89 @@ export default {
                 testCases: [
                     {
                         desc: 'should select block',
+                        startingCode: '({})',
+                        cursorPosition: 0,
+                        expectedSelections: ['({})'],
+                    },
+                    {
+                        desc: 'should select object property',
+                        startingCode: '({a:{}})',
+                        cursorPosition: 5,
+                        expectedSelections: ['a:{}'],
+                    },
+                    {
+                        desc: 'should select array property',
+                        startingCode: '({a:[]})',
+                        cursorPosition: 5,
+                        expectedSelections: ['a:[]'],
+                    },
+                    {
+                        desc: 'should select function declaration',
                         startingCode: 'function foo(){}',
                         cursorPosition: 0,
                         expectedSelections: ['function foo(){}'],
                     },
                     {
+                        desc: 'should select function expression',
+                        startingCode: 'var fn = function(){}',
+                        cursorPosition: 0,
+                        expectedSelections: ['var fn = function(){}'],
+                    },
+                    {
+                        desc: 'should select iife',
+                        startingCode: '(function(){})()',
+                        cursorPosition: 2,
+                        expectedSelections: ['(function(){})()'],
+                    },
+                    {
+                        desc: 'should select arrow function iife',
+                        startingCode: '(()=>{})()',
+                        cursorPosition: 2,
+                        expectedSelections: ['(()=>{})()'],
+                    },
+                    {
+                        desc: 'should select for loop',
+                        startingCode: 'for(let i=0;i<1;i++){}',
+                        cursorPosition: 0,
+                        expectedSelections: ['for(let i=0;i<1;i++){}'],
+                    },
+                    {
+                        desc: 'should select while loop',
+                        startingCode: 'while(true){}',
+                        cursorPosition: 0,
+                        expectedSelections: ['while(true){}'],
+                    },
+                    {
+                        desc: 'should select if statement',
+                        startingCode: 'if(true){}',
+                        cursorPosition: 0,
+                        expectedSelections: ['if(true){}'],
+                    },
+                    {
+                        desc: 'should select object variable',
+                        startingCode: 'var obj={}',
+                        cursorPosition: 9,
+                        expectedSelections: ['var obj={}'],
+                    },
+                    {
+                        desc: 'should select array variable',
+                        startingCode: 'var obj=[]',
+                        cursorPosition: 9,
+                        expectedSelections: ['var obj=[]'],
+                    },
+                    {
                         desc:
                             'should NOT select when cursor is not inside a block',
-                        startingCode: ' function foo(){}',
+                        startingCode: ' ({})',
                         cursorPosition: 0,
                         expectedSelections: [''],
                     },
                     {
                         desc:
                             'should select blocks when multiple cursors are inside blocks',
-                        startingCode: 'function foo(){}\nfunction bar(){}',
-                        cursorPosition: [0, 18],
-                        expectedSelections: ['function foo(){}', 'function bar(){}'],
+                        startingCode: '({a:1});\n({b:2});',
+                        cursorPosition: [2, 11],
+                        expectedSelections: ['({a:1});', '({b:2});'],
                     },
                 ],
             }
