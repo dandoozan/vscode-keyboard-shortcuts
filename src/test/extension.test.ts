@@ -6,15 +6,16 @@ import {
     TextEditor,
     TextEditorEdit,
     Range,
-    languages,
 } from 'vscode';
 import { executeCommand } from '../extension';
 import { setCursor, getSelectedText, readFromClipboard } from '../utils';
 import testCases from './testCases';
-import { once } from 'lodash';
+import { memoize } from 'lodash';
 
-async function createEditor() {
-    const doc = await workspace.openTextDocument();
+async function createEditor(language: string) {
+    const doc = await workspace.openTextDocument({
+        language
+    });
 
     //show the editor so that it's the "activeTextEditor"
     const editor = await window.showTextDocument(doc);
@@ -22,8 +23,8 @@ async function createEditor() {
     return editor;
 }
 
-const getEditor = once(async function getEditor() {
-    return await createEditor();
+const getEditorForLanguage = memoize(async function(language: string) {
+    return await createEditor(language);
 });
 
 async function setEditorText(editor: TextEditor, newText: string) {
@@ -37,7 +38,6 @@ async function setEditorText(editor: TextEditor, newText: string) {
 }
 
 async function runCommandInEditor(
-    language: string,
     type: string,
     action: string,
     testCase,
@@ -45,7 +45,6 @@ async function runCommandInEditor(
 ) {
     const { startingCode, cursorPosition } = testCase;
 
-    await languages.setTextDocumentLanguage(editor.document, language);
     await setEditorText(editor, startingCode);
     await setCursor(editor, cursorPosition);
 
@@ -102,9 +101,8 @@ for (const language in testCases) {
                         }
                         for (const testCase of obj.testCases) {
                             it(testCase.desc, async () => {
-                                const editor = await getEditor();
+                                const editor = await getEditorForLanguage(language);
                                 await runCommandInEditor(
-                                    language,
                                     type,
                                     action,
                                     testCase,
