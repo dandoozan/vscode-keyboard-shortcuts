@@ -255,13 +255,13 @@ export default {
                     {
                         desc: 'should select object property',
                         startingCode: '({a:{}})',
-                        cursorPosition: 5,
+                        cursorPosition: 2,
                         expectedSelections: ['a:{}'],
                     },
                     {
                         desc: 'should select array property',
                         startingCode: '({a:[]})',
-                        cursorPosition: 5,
+                        cursorPosition: 2,
                         expectedSelections: ['a:[]'],
                     },
                     {
@@ -279,13 +279,13 @@ export default {
                     {
                         desc: 'should select iife',
                         startingCode: '(function(){})()',
-                        cursorPosition: 2,
+                        cursorPosition: 0,
                         expectedSelections: ['(function(){})()'],
                     },
                     {
                         desc: 'should select arrow function iife',
                         startingCode: '(()=>{})()',
-                        cursorPosition: 2,
+                        cursorPosition: 0,
                         expectedSelections: ['(()=>{})()'],
                     },
                     {
@@ -309,27 +309,27 @@ export default {
                     {
                         desc: 'should select object variable',
                         startingCode: 'var obj={}',
-                        cursorPosition: 9,
+                        cursorPosition: 0,
                         expectedSelections: ['var obj={}'],
                     },
                     {
                         desc: 'should select array variable',
                         startingCode: 'var obj=[]',
-                        cursorPosition: 9,
+                        cursorPosition: 0,
                         expectedSelections: ['var obj=[]'],
                     },
                     {
                         desc:
                             'should NOT select when cursor is not inside a block',
-                        startingCode: ' ({})',
-                        cursorPosition: 0,
+                        startingCode: '({})',
+                        cursorPosition: 4,
                         expectedSelections: [''],
                     },
                     {
                         desc:
                             'should select blocks when multiple cursors are inside blocks',
                         startingCode: '({a:1});\n({b:2});',
-                        cursorPosition: [2, 11],
+                        cursorPosition: [0, 9],
                         expectedSelections: ['({a:1});', '({b:2});'],
                     },
                 ],

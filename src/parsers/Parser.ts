@@ -46,7 +46,7 @@ export default abstract class Parser {
     }
 
     private isCursorInsideNode(node: Node, cursor: number) {
-        let cursorBoundary = node.getCursorBoundary(cursor);
+        let cursorBoundary = node.getCursorBoundary();
         return cursorBoundary.start <= cursor && cursor <= cursorBoundary.end;
     }
 
@@ -61,7 +61,7 @@ export default abstract class Parser {
         //find the "most" enclosing one
         return maxBy(
             enclosingNodes,
-            node => (node as Node).getCursorBoundary(cursor).start
+            node => (node as Node).getCursorBoundary().start
         );
     }
 }

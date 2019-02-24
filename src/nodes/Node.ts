@@ -15,7 +15,7 @@ export default class Node {
         return this.boundary;
     }
 
-    getCursorBoundary(cursor: number) {
+    getCursorBoundary() {
         return this.boundary;
     }
 }
