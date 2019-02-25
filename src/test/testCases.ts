@@ -333,7 +333,7 @@ export default {
                         expectedSelections: ['({a:1});', '({b:2});'],
                     },
                 ],
-            }
+            },
         },
         inner_block: {
             select: {
@@ -404,52 +404,50 @@ export default {
                 ],
             },
         },
-        parameter: {
+        item: {
             select: {
                 testCases: [
                     {
+                        desc: 'should select item',
+                        startingCode: '(["item1"])',
+                        cursorPosition: 2,
+                        expectedSelections: ['"item1"'],
+                    },
+                    {
                         desc: 'should select parameter',
-                        startingCode: '((param1) => {})',
+                        startingCode: '((param1)=>{})',
                         cursorPosition: 2,
                         expectedSelections: ['param1'],
                     },
                     {
+                        desc: 'should select argument',
+                        startingCode: '(()=>{})("arg1")',
+                        cursorPosition: 10,
+                        expectedSelections: ['"arg1"'],
+                    },
+                    {
                         desc:
-                            'should NOT select when cursor is not inside a paramater',
-                        startingCode: '((param1) => {})',
+                            'should NOT select when cursor is not inside an item',
+                        startingCode: '(["item1"])',
                         cursorPosition: 0,
                         expectedSelections: [''],
                     },
                     {
                         desc:
-                            'should select parameters when multiple cursors are inside parameters',
-                        startingCode: '((param1, param2) => {})',
-                        cursorPosition: [2, 10],
-                        expectedSelections: ['param1', 'param2'],
+                            'should select items when multiple cursors are inside items',
+                        startingCode: '(["item1", "item2"])',
+                        cursorPosition: [2, 11],
+                        expectedSelections: ['"item1"', '"item2"'],
                     },
                 ],
             },
             delete: {
                 testCases: [
                     {
-                        desc: 'should delete parameter',
-                        startingCode: '((param1) => {})',
+                        desc: 'should delete item',
+                        startingCode: '(["item1"])',
                         cursorPosition: 2,
-                        endingCode: '(() => {})',
-                    },
-                    {
-                        desc:
-                            'should NOT delete when cursor is not inside a parameter',
-                        startingCode: '((param1) => {})',
-                        cursorPosition: 0,
-                        endingCode: '((param1) => {})',
-                    },
-                    {
-                        desc:
-                            'should delete parameters when multiple cursors are inside parameters',
-                        startingCode: '((param1, param2) => {})',
-                        cursorPosition: [2, 10],
-                        endingCode: '((, ) => {})',
+                        endingCode: '([])',
                     },
                 ],
             },
@@ -459,27 +457,11 @@ export default {
                 },
                 testCases: [
                     {
-                        desc: 'should cut parameter',
-                        startingCode: '((param1) => {})',
+                        desc: 'should cut item',
+                        startingCode: '(["item1"])',
                         cursorPosition: 2,
-                        endingCode: '(() => {})',
-                        expectedClipboardContent: 'param1',
-                    },
-                    {
-                        desc:
-                            'should NOT cut when cursor is not inside a parameter',
-                        startingCode: '((param1) => {})',
-                        cursorPosition: 0,
-                        endingCode: '((param1) => {})',
-                        expectedClipboardContent: 'PreviousClipboardContent',
-                    },
-                    {
-                        desc:
-                            'should cut parameters when multiple cursors are inside parameters',
-                        startingCode: '((param1, param2) => {})',
-                        cursorPosition: [2, 10],
-                        endingCode: '((, ) => {})',
-                        expectedClipboardContent: 'param1\nparam2',
+                        endingCode: '([])',
+                        expectedClipboardContent: '"item1"',
                     },
                 ],
             },
@@ -489,27 +471,11 @@ export default {
                 },
                 testCases: [
                     {
-                        desc: 'should copy parameter',
-                        startingCode: '((param1) => {})',
+                        desc: 'should copy item',
+                        startingCode: '(["item1"])',
                         cursorPosition: 2,
-                        expectedSelections: ['param1'],
-                        expectedClipboardContent: 'param1',
-                    },
-                    {
-                        desc:
-                            'should NOT copy when cursor is not inside a parameter',
-                        startingCode: '((param1) => {})',
-                        cursorPosition: 0,
-                        expectedSelections: [''],
-                        expectedClipboardContent: 'PreviousClipboardContent',
-                    },
-                    {
-                        desc:
-                            'should copy parameters when multiple cursors are inside parameters',
-                        startingCode: '((param1, param2) => {})',
-                        cursorPosition: [2, 10],
-                        expectedSelections: ['param1', 'param2'],
-                        expectedClipboardContent: 'param1\nparam2',
+                        expectedSelections: ['"item1"'],
+                        expectedClipboardContent: '"item1"',
                     },
                 ],
             },
@@ -519,24 +485,10 @@ export default {
                 },
                 testCases: [
                     {
-                        desc: 'should replace parameter',
-                        startingCode: '((param1) => {})',
+                        desc: 'should replace item',
+                        startingCode: '(["item1"])',
                         cursorPosition: 2,
-                        endingCode: '((ClipboardContent) => {})',
-                    },
-                    {
-                        desc:
-                            'should NOT replace when cursor is not inside a parameter',
-                        startingCode: '((param1) => {})',
-                        cursorPosition: 0,
-                        endingCode: '((param1) => {})',
-                    },
-                    {
-                        desc:
-                            'should replace parameters when multiple cursors are inside parameters',
-                        startingCode: '((param1, param2) => {})',
-                        cursorPosition: [2, 10],
-                        endingCode: '((ClipboardContent, ClipboardContent) => {})',
+                        endingCode: '([ClipboardContent])',
                     },
                 ],
             },

@@ -9,13 +9,14 @@ import {
     isBlockStatement,
     isObjectExpression,
     isFunction,
-    Node,
+    Node as BabelNode,
     isVariableDeclaration,
     isArrayExpression,
     isFunctionExpression,
     isVariableDeclarator,
     isExpressionStatement,
     isArrowFunctionExpression,
+    isCallExpression,
 } from '@babel/types';
 import { get } from 'lodash';
 
@@ -25,9 +26,10 @@ export default class JavaScriptParser extends Parser {
         block: this.createBlockNodes,
         inner_block: this.createInnerBlockNodes,
         parameter: this.createParameterNodes,
+        item: this.createItemNodes,
     };
 
-    createNode(type: string, astNode: Node) {
+    createNode(type: string, astNode: BabelNode) {
         const { start, end } = astNode;
         return NodeFactory.createNode(
             type,
@@ -36,7 +38,7 @@ export default class JavaScriptParser extends Parser {
         );
     }
 
-    createStringNodes(astNode: Node) {
+    createStringNodes(astNode: BabelNode) {
         if (
             isStringLiteral(astNode) ||
             isTemplateLiteral(astNode) ||
@@ -45,7 +47,7 @@ export default class JavaScriptParser extends Parser {
             return this.createNode('string', astNode);
         }
     }
-    createBlockNodes(astNode: Node) {
+    createBlockNodes(astNode: BabelNode) {
         let isBlock = false;
 
         //include all ExpressionStatements
@@ -101,23 +103,45 @@ export default class JavaScriptParser extends Parser {
         //     return this.createNode('block', astNode);
         // }
     }
-    createInnerBlockNodes(astNode: Node) {
+    createInnerBlockNodes(astNode: BabelNode) {
         if (isBlockStatement(astNode) || isObjectExpression(astNode)) {
             return this.createNode('inner_block', astNode);
         }
     }
-    createParameterNodes(astNode: Node) {
+    createParameterNodes(astNode: BabelNode) {
         if (isFunction(astNode)) {
             return astNode.params.map(paramNode =>
                 this.createNode('parameter', paramNode)
             );
         }
     }
+    createItemNodes(astNode: BabelNode) {
+        let astNodesToConvertToNodes: (BabelNode | null)[] = [];
+
+        //handle array items
+        if (isArrayExpression(astNode)) {
+            astNodesToConvertToNodes = astNode.elements;
+        }
+
+        //handle parameters
+        else if (isFunction(astNode)) {
+            astNodesToConvertToNodes = astNode.params;
+        }
+
+        //handle arguments
+        else if (isCallExpression(astNode)) {
+            astNodesToConvertToNodes = astNode.arguments;
+        }
+
+        return astNodesToConvertToNodes
+            .filter(astNde => astNde) //filter out the null ones
+            .map(astNde => this.createNode('item', astNde as BabelNode));
+    }
 
     generateAst(code: string) {
         return generateBabelAst(code);
     }
-    traverseAst(astNode: Node, fnToApplyToEveryNode: Function) {
+    traverseAst(astNode: BabelNode, fnToApplyToEveryNode: Function) {
         traverseBabelAst(astNode, fnToApplyToEveryNode.bind(this));
     }
 }
