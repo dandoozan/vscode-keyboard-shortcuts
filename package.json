@@ -3,7 +3,7 @@
     "displayName": "DPD VKS",
     "description": "",
     "keywords": [],
-    "version": "0.0.13",
+    "version": "0.0.14",
     "publisher": "dandoozan",
     "icon": "",
     "repository": {
@@ -113,42 +113,42 @@
                 }
             },
             {
-                "command": "vks.selectParameter",
-                "title": "VKS: Select Parameter",
+                "command": "vks.selectItem",
+                "title": "VKS: Select Item",
                 "data": {
-                    "type": "parameter",
+                    "type": "item",
                     "action": "select"
                 }
             },
             {
-                "command": "vks.deleteParameter",
-                "title": "VKS: Delete Parameter",
+                "command": "vks.deleteItem",
+                "title": "VKS: Delete Item",
                 "data": {
-                    "type": "parameter",
+                    "type": "item",
                     "action": "delete"
                 }
             },
             {
-                "command": "vks.cutParameter",
-                "title": "VKS: Cut Parameter",
+                "command": "vks.cutItem",
+                "title": "VKS: Cut Item",
                 "data": {
-                    "type": "parameter",
+                    "type": "item",
                     "action": "cut"
                 }
             },
             {
-                "command": "vks.copyParameter",
-                "title": "VKS: Copy Parameter",
+                "command": "vks.copyItem",
+                "title": "VKS: Copy Item",
                 "data": {
-                    "type": "parameter",
+                    "type": "item",
                     "action": "copy"
                 }
             },
             {
-                "command": "vks.replaceParameter",
-                "title": "VKS: Replace Parameter",
+                "command": "vks.replaceItem",
+                "title": "VKS: Replace Item",
                 "data": {
-                    "type": "parameter",
+                    "type": "item",
                     "action": "replace"
                 }
             }
