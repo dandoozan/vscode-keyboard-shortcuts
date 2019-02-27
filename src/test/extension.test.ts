@@ -1,59 +1,12 @@
 import { strictEqual } from 'assert';
-import {
-    workspace,
-    window,
-    commands,
-    TextEditor,
-    TextEditorEdit,
-    Range,
-} from 'vscode';
 import { executeCommand } from '../extension';
-import { setCursor, getSelectedText, readFromClipboard } from '../utils';
+import { getSelectedText, readFromClipboard, createEditor, runTestCaseInEditor } from '../utils';
 import testCases from './testCases';
 import { memoize } from 'lodash';
-
-async function createEditor(language: string) {
-    const doc = await workspace.openTextDocument({
-        language,
-    });
-
-    //show the editor so that it's the "activeTextEditor"
-    const editor = await window.showTextDocument(doc);
-
-    return editor;
-}
 
 const getEditorForLanguage = memoize(async function(language: string) {
     return await createEditor(language);
 });
-
-async function setEditorText(editor: TextEditor, newText: string) {
-    const oldTextRange = new Range(
-        editor.document.positionAt(0),
-        editor.document.positionAt(editor.document.getText().length)
-    );
-    await editor.edit((editBuilder: TextEditorEdit) => {
-        editBuilder.replace(oldTextRange, newText);
-    });
-}
-
-async function runCommandInEditor(
-    type: string,
-    action: string,
-    testCase,
-    editor: TextEditor
-) {
-    const { startingCode, cursorPosition } = testCase;
-
-    await setEditorText(editor, startingCode);
-    await setCursor(editor, cursorPosition);
-
-    // await commands.executeCommand(`vks.${commandName}`); // <- i tried this
-    // but it seems it is not awaiting for some reason
-    await executeCommand.call({ action, type }, editor);
-
-    return editor;
-}
 
 const actionTests = {
     select: ({ expectedSelections }, editor) => {
@@ -108,11 +61,11 @@ for (const language in testCases) {
                                             const editor = await getEditorForLanguage(
                                                 language
                                             );
-                                            await runCommandInEditor(
-                                                type,
-                                                action,
+                                            await runTestCaseInEditor(
                                                 testCase,
-                                                editor
+                                                editor,
+                                                executeCommand,
+                                                { type, action }
                                             );
                                             actionTests[action](
                                                 testCase,
