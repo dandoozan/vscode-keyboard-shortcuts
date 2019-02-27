@@ -247,7 +247,7 @@ export default {
             select: {
                 testCases: [
                     {
-                        desc: 'should select block',
+                        desc: 'should select object expression',
                         startingCode: '({})',
                         cursorPosition: 0,
                         expectedSelections: ['({})'],
@@ -275,6 +275,12 @@ export default {
                         startingCode: 'var fn = function(){}',
                         cursorPosition: 0,
                         expectedSelections: ['var fn = function(){}'],
+                    },
+                    {
+                        desc: 'should select arrow function expression',
+                        startingCode: 'var fn = ()=>{}',
+                        cursorPosition: 0,
+                        expectedSelections: ['var fn = ()=>{}'],
                     },
                     {
                         desc: 'should select iife',
@@ -307,16 +313,40 @@ export default {
                         expectedSelections: ['if(true){}'],
                     },
                     {
-                        desc: 'should select object variable',
+                        desc: 'should select variable that is an object',
                         startingCode: 'var obj={}',
                         cursorPosition: 0,
                         expectedSelections: ['var obj={}'],
                     },
                     {
-                        desc: 'should select array variable',
+                        desc: 'should select variable that is an array',
                         startingCode: 'var obj=[]',
                         cursorPosition: 0,
                         expectedSelections: ['var obj=[]'],
+                    },
+                    {
+                        desc: 'should select array item that is an object',
+                        startingCode: '([{}])',
+                        cursorPosition: 2,
+                        expectedSelections: ['{}'],
+                    },
+                    {
+                        desc: 'should select array item that is an array',
+                        startingCode: '([[]])',
+                        cursorPosition: 2,
+                        expectedSelections: ['[]'],
+                    },
+                    {
+                        desc: 'should select array item that is a function',
+                        startingCode: '([function(){}])',
+                        cursorPosition: 2,
+                        expectedSelections: ['function(){}'],
+                    },
+                    {
+                        desc: 'should select array item that is an arrow function',
+                        startingCode: '([()=>{}])',
+                        cursorPosition: 2,
+                        expectedSelections: ['()=>{}'],
                     },
                     {
                         desc:

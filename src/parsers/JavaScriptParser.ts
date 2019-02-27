@@ -19,6 +19,7 @@ import {
     isCallExpression,
 } from '@babel/types';
 import { get } from 'lodash';
+import Node from '../nodes/Node';
 
 export default class JavaScriptParser extends Parser {
     typeCreators = {
@@ -48,15 +49,15 @@ export default class JavaScriptParser extends Parser {
         }
     }
     createBlockNodes(astNode: BabelNode) {
-        let isBlock = false;
+        let nodes: Node[] = [];
 
         //include all ExpressionStatements
         if (isExpressionStatement(astNode)) {
-            isBlock = true;
+            nodes.push(this.createNode('block', astNode));
         }
 
         //include any ast node that has a child that is an object, array, or block
-        //except for VariableDeclarations or FunctionExpressions
+        //except for VariableDeclarations or FunctionExpressions (handled below)
         if (
             !(
                 isVariableDeclarator(astNode) ||
@@ -72,36 +73,42 @@ export default class JavaScriptParser extends Parser {
                         isArrayExpression(value) ||
                         isBlockStatement(value)
                     ) {
-                        isBlock = true;
+                        nodes.push(this.createNode('block', astNode));
                     }
                 }
             }
         }
 
-        //handle variables
+        //include variables that are objects, arrays, or functions
         if (isVariableDeclaration(astNode)) {
             let declarationInit = get(astNode, 'declarations[0].init');
             if (
                 isObjectExpression(declarationInit) || //objects
                 isArrayExpression(declarationInit) || //arrays
-                isFunctionExpression(declarationInit) //functions
+                isFunctionExpression(declarationInit) || //functions
+                isArrowFunctionExpression(declarationInit) //arrow functions
             ) {
-                isBlock = true;
+                nodes.push(this.createNode('block', astNode));
             }
         }
 
-        if (isBlock) {
-            return this.createNode('block', astNode);
+        //include items in arrays that are objects, arrays, or functions
+        if (isArrayExpression(astNode)) {
+            astNode.elements.forEach(element => {
+                if (element) {
+                    if (
+                        isObjectExpression(element) || //objects
+                        isArrayExpression(element) || //arrays
+                        isFunctionExpression(element) || //functions
+                        isArrowFunctionExpression(element) //arrow functions
+                    ) {
+                        nodes.push(this.createNode('block', element));
+                    }
+                }
+            });
         }
 
-        // if (
-        //     isFunctionDeclaration(astNode) ||
-        //     isForStatement(astNode) ||
-        //     isWhileStatement(astNode) ||
-        //     isIfStatement(astNode)
-        // ) {
-        //     return this.createNode('block', astNode);
-        // }
+        return nodes;
     }
     createInnerBlockNodes(astNode: BabelNode) {
         if (isBlockStatement(astNode) || isObjectExpression(astNode)) {
