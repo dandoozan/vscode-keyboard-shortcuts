@@ -7,7 +7,7 @@ export default class InnerBlockNode extends Node {
     constructor(boundary: Boundary, editor: TextEditor) {
         super('inner_block', boundary, editor);
     }
-    
+
     getActionBoundary(action: string) {
         let boundaryStart = this.boundary.start + 1; //exclude the opening bracket
         let boundaryEnd = this.boundary.end - 1; //exclude the ending bracket
@@ -27,7 +27,7 @@ export default class InnerBlockNode extends Node {
             boundaryEnd = getOffsetOfLineAndChar(previousLineNumber, endOfPreviousLine, this.editor.document);
         }
 
-        return new Boundary(boundaryStart, boundaryEnd)
+        return { start: boundaryStart, end: boundaryEnd }
     }
 
 

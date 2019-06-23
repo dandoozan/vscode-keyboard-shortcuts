@@ -34,7 +34,7 @@ export default class JavaScriptParser extends Parser {
         const { start, end } = astNode;
         return NodeFactory.createNode(
             type,
-            new Boundary(start as number, end as number),
+            { start: start as number, end: end as number },
             this.editor
         );
     }

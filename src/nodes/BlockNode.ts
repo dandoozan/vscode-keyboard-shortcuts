@@ -10,7 +10,7 @@ export default class BlockNode extends Node {
     getCursorBoundary() {
         //exclude the ending brace (so that the cursor has to be inside the
         //ending brace)
-        return new Boundary(this.boundary.start, this.boundary.end - 1);
+        return { start: this.boundary.start, end: this.boundary.end - 1 };
     }
 
     getActionBoundary(action: string) {

@@ -1,7 +1,6 @@
 import Parser from './Parser';
 import { generateJsonAst, traverseJsonAst } from '../utils';
 import NodeFactory from '../factories/NodeFactory';
-import Boundary from '../Boundary';
 import { isString, get } from 'lodash';
 import Node from '../nodes/Node';
 
@@ -23,7 +22,7 @@ export default class JsonParser extends Parser {
             nodes.push(
                 NodeFactory.createNode(
                     'string',
-                    new Boundary(start, end),
+                    { start, end },
                     this.editor
                 )
             );
