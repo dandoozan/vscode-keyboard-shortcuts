@@ -5,9 +5,9 @@ import {
     getCursors,
     addTextEditorCommand,
     getExtensionCommands,
+    Boundary,
 } from './utils';
 import Actions from './Actions';
-import Boundary from './Boundary';
 import ParserFactory from './factories/ParserFactory';
 
 export async function executeCommand(editor: TextEditor) {

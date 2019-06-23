@@ -1,10 +1,10 @@
 import { TextEditor } from 'vscode';
 import StringNode from '../nodes/StringNode';
-import Boundary from '../Boundary';
 import BlockNode from '../nodes/BlockNode';
 import InnerBlockNode from '../nodes/InnerBlockNode';
 import ParameterNode from '../nodes/ParameterNode';
 import ItemNode from '../nodes/ItemNode';
+import { Boundary } from '../utils';
 
 const NODE_CLASSES = {
     string: StringNode,

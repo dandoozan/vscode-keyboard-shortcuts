@@ -1,7 +1,6 @@
 import Parser from './Parser';
 import { generateBabelAst, traverseBabelAst } from '../utils';
 import NodeFactory from '../factories/NodeFactory';
-import Boundary from '../Boundary';
 import {
     isStringLiteral,
     isTemplateLiteral,

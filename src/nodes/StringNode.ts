@@ -1,6 +1,6 @@
 import Node from "./Node";
-import Boundary from "../Boundary";
 import { TextEditor } from "vscode";
+import { Boundary } from "../utils";
 
 export default class StringNode extends Node {
     constructor(boundary: Boundary, editor: TextEditor) {

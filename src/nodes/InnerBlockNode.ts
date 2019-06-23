@@ -1,7 +1,6 @@
 import Node from "./Node";
-import Boundary from "../Boundary";
 import { TextEditor } from "vscode";
-import { getBoundaryText, getLineNumberAtOffset, getFirstNonWhitespaceCharOnLine, getLengthOfLine, getOffsetOfLineAndChar } from "../utils";
+import { getBoundaryText, getLineNumberAtOffset, getFirstNonWhitespaceCharOnLine, getLengthOfLine, getOffsetOfLineAndChar, Boundary } from "../utils";
 
 export default class InnerBlockNode extends Node {
     constructor(boundary: Boundary, editor: TextEditor) {

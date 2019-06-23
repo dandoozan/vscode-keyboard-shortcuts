@@ -1,5 +1,5 @@
-import Boundary from "../Boundary";
 import { TextEditor } from "vscode";
+import { Boundary } from "../utils";
 
 export default class Node {
     type: string
