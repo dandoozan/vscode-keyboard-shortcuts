@@ -53,15 +53,17 @@ export default abstract class Parser {
     getMostEnclosingNodeOfType(type: string, cursor: number, code: string) {
         const nodesByType = this.parseCode(code);
 
-        //get all enclosing nodes
-        const enclosingNodes = nodesByType[type].filter(node =>
-            this.isCursorInsideNode(node, cursor)
-        );
+        if (nodesByType[type]) {
+            //get all enclosing nodes
+            const enclosingNodes = nodesByType[type].filter(node =>
+                this.isCursorInsideNode(node, cursor)
+            );
 
-        //find the "most" enclosing one
-        return maxBy(
-            enclosingNodes,
-            node => (node as Node).getCursorBoundary().start
-        );
+            //find the "most" enclosing one
+            return maxBy(
+                enclosingNodes,
+                node => (node as Node).getCursorBoundary().start
+            );
+        }
     }
 }
