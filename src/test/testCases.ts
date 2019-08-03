@@ -1,6 +1,6 @@
 import { writeToClipboard } from '../utils';
 
-//tests i should make:
+//tests:
 //-javascript
 //  -string commands
 //      -selectString

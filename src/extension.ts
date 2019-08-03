@@ -13,17 +13,12 @@ import ParserFactory from './factories/ParserFactory';
 import { isEmpty } from 'lodash';
 
 export async function executeCommand(editor: TextEditor) {
-    //@ts-ignore (i'm ts-ignoring the line below because it complained about the "this")
+    //@ts-ignore (i'm ts-ignoring the line below because it complains about the "this")
     const { action, type } = this;
 
     const code = getFileText(editor);
     const language = getLanguage(editor);
-
-    //todo: improve efficiency by persisting the parser between commands (right
-    //now, I'm creating a new Parser each time a command is run, meaning the
-    //file is re-parsed (ie. an AST is generated from the code) each time)
     const parser = ParserFactory.createParser(language, editor);
-
     const cursors = getCursors(editor);
 
     //get the most enclosing node for each cursor

@@ -6,8 +6,4 @@ export default class ItemNode extends Node {
     constructor(boundary: Boundary, editor: TextEditor) {
         super('item', boundary, editor);
     }
-
-    getActionBoundary(action: string) {
-        return this.boundary;
-    }
 }

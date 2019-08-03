@@ -12,8 +12,4 @@ export default class BlockNode extends Node {
         //ending brace)
         return { start: this.boundary.start, end: this.boundary.end - 1 };
     }
-
-    getActionBoundary(action: string) {
-        return this.boundary;
-    }
 }
