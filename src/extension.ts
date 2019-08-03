@@ -6,9 +6,11 @@ import {
     addTextEditorCommand,
     getExtensionCommands,
     Boundary,
+    notify,
 } from './utils';
 import Actions from './Actions';
 import ParserFactory from './factories/ParserFactory';
+import { isEmpty } from 'lodash';
 
 export async function executeCommand(editor: TextEditor) {
     //@ts-ignore (i'm ts-ignoring the line below because it complained about the "this")
@@ -31,7 +33,11 @@ export async function executeCommand(editor: TextEditor) {
 
     const actionBoundaries = nodes.map(node => node.getActionBoundary(action));
 
-    await Actions[action](editor, actionBoundaries as Boundary[]);
+    if (!isEmpty(actionBoundaries)) {
+        await Actions[action](editor, actionBoundaries as Boundary[]);
+    } else {
+        notify(`No enclosing "${type}" found`);
+    }
 }
 
 export function activate(context: ExtensionContext) {
