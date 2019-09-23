@@ -5,7 +5,9 @@ import { TextEditor } from 'vscode';
 
 const PARSER_CLASSES = {
     javascript: JavaScriptParser,
+    javascriptreact: JavaScriptParser,
     typescript: TypeScriptParser,
+    typescriptreact: TypeScriptParser,
     json: JsonParser,
 };
 

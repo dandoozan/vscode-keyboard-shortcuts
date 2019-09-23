@@ -3,42 +3,44 @@ import { writeToClipboard } from '../utils';
 //tests:
 //-javascript
 //  -string commands
-//      -selectString
+//      -select
 //          -'regular string'
 //          -`template string`
 //          -'directive' (ie. 'use strict')
 //          -other
 //              -cursor not inside a string
 //              -multi cursor
-//      -deleteString
+//      -delete
 //          ...
 //      ...
 //  -parameter commands
-//      -selectParameter
+//      -select
 //          -parameter
 //      ...
 //  ...
-//-typescript
-//  -selectString
-//      -'regular string'
-//      -`template string`
-//      -'directive' (ie. 'use strict')
-//      -other
-//          -cursor not inside a string
-//          -multi cursor
-//  -deleteString
-//      ...
-//  ...
+//-jsx (javascriptreact) (just do a few basic tests because the main tests should be in Babel)
+//  -string
+//      -select
+//          -paramater (eg. <div className="my-class"></div>)
+//-typescript (just do a few basic tests because the main tests should be in Babel)
+//  -string
+//      -select
+//          -typed string (eg. let str: string = 'regular string')
+//-tsx (typescriptreact) (just do a few basic tests because the main tests should be in Babel)
+//  -string
+//      -select
+//          -parameter (eg. <div className="my-class"></div>)
 //-json
-//  -selectString
-//      -"key"
-//      -"value"
-//      -other
-//          -cursor not inside a string
-//          -multi cursor
-//  -deleteString
+//  -string
+//      -select
+//          -"key"
+//          -"value"
+//          -other
+//              -cursor not inside a string
+//              -multi cursor
+//      -delete
+//          ...
 //      ...
-//  ...
 
 export default {
     javascript: {
@@ -343,7 +345,8 @@ export default {
                         expectedSelections: ['function(){}'],
                     },
                     {
-                        desc: 'should select array item that is an arrow function',
+                        desc:
+                            'should select array item that is an arrow function',
                         startingCode: '([()=>{}])',
                         cursorPosition: 2,
                         expectedSelections: ['()=>{}'],
@@ -519,6 +522,48 @@ export default {
                         startingCode: '(["item1"])',
                         cursorPosition: 2,
                         endingCode: '([ClipboardContent])',
+                    },
+                ],
+            },
+        },
+    },
+    javascriptreact: {
+        string: {
+            select: {
+                testCases: [
+                    {
+                        desc: 'should select string',
+                        startingCode: '<div className="my-class"></div>',
+                        cursorPosition: 16,
+                        expectedSelections: ['my-class'],
+                    },
+                ],
+            },
+        },
+    },
+    typescript: {
+        string: {
+            select: {
+                testCases: [
+                    {
+                        desc: 'should select string',
+                        startingCode: 'let a: string = "String contents";',
+                        cursorPosition: 16,
+                        expectedSelections: ['String contents'],
+                    },
+                ],
+            },
+        },
+    },
+    typescriptreact: {
+        string: {
+            select: {
+                testCases: [
+                    {
+                        desc: 'should select string',
+                        startingCode: '<div className="my-class"></div>',
+                        cursorPosition: 16,
+                        expectedSelections: ['my-class'],
                     },
                 ],
             },
