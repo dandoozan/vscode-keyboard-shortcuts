@@ -15,11 +15,11 @@ import * as testRunner from 'vscode/lib/testrunner';
 // You can directly control Mocha options by uncommenting the following lines
 // See https://github.com/mochajs/mocha/wiki/Using-mocha-programmatically#set-options for more info
 testRunner.configure({
-    ui: 'bdd', // the TDD UI is being used in extension.test.ts (suite, test, etc.)
-    useColors: true, // colored output from test results
-    bail: true,
-    // fullTrace: false, // <- fullTrace is not an option here for some reason
-    //reporter: 'list', //for more options, see: https://mochajs.org/#reporters
+  ui: 'bdd', // the TDD UI is being used in extension.test.ts (suite, test, etc.)
+  useColors: true, // colored output from test results
+  bail: true,
+  // fullTrace: false, // <- fullTrace is not an option here for some reason
+  //reporter: 'list', //for more options, see: https://mochajs.org/#reporters
 });
 
 module.exports = testRunner;

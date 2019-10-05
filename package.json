@@ -1,185 +1,185 @@
 {
-    "name": "vscode-keyboard-shortcuts",
-    "displayName": "VSCode Keyboard Shortcuts",
-    "description": "",
-    "keywords": [],
-    "version": "0.0.20",
-    "publisher": "dandoozan",
-    "icon": "",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/dandoozan/vscode-keyboard-shortcuts"
-    },
-    "engines": {
-        "vscode": "^1.30.0"
-    },
-    "categories": [
-        "Other"
-    ],
-    "activationEvents": [
-        "onLanguage:javascript",
-        "onLanguage:javascriptreact",
-        "onLanguage:typescript",
-        "onLanguage:typescriptreact",
-        "onLanguage:json"
-    ],
-    "main": "./out/extension.js",
-    "contributes": {
-        "commands": [
-            {
-                "command": "vks.selectString",
-                "title": "VKS: Select String",
-                "data": {
-                    "type": "string",
-                    "action": "select"
-                }
-            },
-            {
-                "command": "vks.deleteString",
-                "title": "VKS: Delete String",
-                "data": {
-                    "type": "string",
-                    "action": "delete"
-                }
-            },
-            {
-                "command": "vks.cutString",
-                "title": "VKS: Cut String",
-                "data": {
-                    "type": "string",
-                    "action": "cut"
-                }
-            },
-            {
-                "command": "vks.copyString",
-                "title": "VKS: Copy String",
-                "data": {
-                    "type": "string",
-                    "action": "copy"
-                }
-            },
-            {
-                "command": "vks.replaceString",
-                "title": "VKS: Replace String",
-                "data": {
-                    "type": "string",
-                    "action": "replace"
-                }
-            },
-            {
-                "command": "vks.selectBlock",
-                "title": "VKS: Select Block",
-                "data": {
-                    "type": "block",
-                    "action": "select"
-                }
-            },
-            {
-                "command": "vks.deleteBlock",
-                "title": "VKS: Delete Block",
-                "data": {
-                    "type": "block",
-                    "action": "delete"
-                }
-            },
-            {
-                "command": "vks.cutBlock",
-                "title": "VKS: Cut Block",
-                "data": {
-                    "type": "block",
-                    "action": "cut"
-                }
-            },
-            {
-                "command": "vks.copyBlock",
-                "title": "VKS: Copy Block",
-                "data": {
-                    "type": "block",
-                    "action": "copy"
-                }
-            },
-            {
-                "command": "vks.selectInnerBlock",
-                "title": "VKS: Select Inner Block",
-                "data": {
-                    "type": "inner_block",
-                    "action": "select"
-                }
-            },
-            {
-                "command": "vks.copyInnerBlock",
-                "title": "VKS: Copy Inner Block",
-                "data": {
-                    "type": "inner_block",
-                    "action": "copy"
-                }
-            },
-            {
-                "command": "vks.selectItem",
-                "title": "VKS: Select Item",
-                "data": {
-                    "type": "item",
-                    "action": "select"
-                }
-            },
-            {
-                "command": "vks.deleteItem",
-                "title": "VKS: Delete Item",
-                "data": {
-                    "type": "item",
-                    "action": "delete"
-                }
-            },
-            {
-                "command": "vks.cutItem",
-                "title": "VKS: Cut Item",
-                "data": {
-                    "type": "item",
-                    "action": "cut"
-                }
-            },
-            {
-                "command": "vks.copyItem",
-                "title": "VKS: Copy Item",
-                "data": {
-                    "type": "item",
-                    "action": "copy"
-                }
-            },
-            {
-                "command": "vks.replaceItem",
-                "title": "VKS: Replace Item",
-                "data": {
-                    "type": "item",
-                    "action": "replace"
-                }
-            }
-        ]
-    },
-    "scripts": {
-        "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "npm run compile && node ./node_modules/vscode/bin/test",
-        "updateAndInstall": "npm run bumpVersion && npm run createVsix && npm run installVsix",
-        "bumpVersion": "npm --no-git-tag-version version patch",
-        "createVsix": "vsce package --out vsix/$npm_package_name-$npm_package_version.vsix",
-        "installVsix": "code --install-extension vsix/$npm_package_name-$npm_package_version.vsix"
-    },
-    "devDependencies": {
-        "@types/clipboardy": "^1.1.0",
-        "@types/lodash": "^4.14.120",
-        "@types/mocha": "^2.2.42",
-        "@types/node": "^8.10.25",
-        "typescript": "^3.1.4",
-        "vscode": "^1.1.25"
-    },
-    "dependencies": {
-        "@babel/parser": "^7.2.3",
-        "@babel/types": "^7.2.2",
-        "clipboardy": "^1.2.3",
-        "json-to-ast": "^2.1.0",
-        "lodash": "^4.17.11"
-    }
+  "name": "vscode-keyboard-shortcuts",
+  "displayName": "VSCode Keyboard Shortcuts",
+  "description": "",
+  "keywords": [],
+  "version": "0.0.20",
+  "publisher": "dandoozan",
+  "icon": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dandoozan/vscode-keyboard-shortcuts"
+  },
+  "engines": {
+    "vscode": "^1.30.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:javascript",
+    "onLanguage:javascriptreact",
+    "onLanguage:typescript",
+    "onLanguage:typescriptreact",
+    "onLanguage:json"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "vks.selectString",
+        "title": "VKS: Select String",
+        "data": {
+          "type": "string",
+          "action": "select"
+        }
+      },
+      {
+        "command": "vks.deleteString",
+        "title": "VKS: Delete String",
+        "data": {
+          "type": "string",
+          "action": "delete"
+        }
+      },
+      {
+        "command": "vks.cutString",
+        "title": "VKS: Cut String",
+        "data": {
+          "type": "string",
+          "action": "cut"
+        }
+      },
+      {
+        "command": "vks.copyString",
+        "title": "VKS: Copy String",
+        "data": {
+          "type": "string",
+          "action": "copy"
+        }
+      },
+      {
+        "command": "vks.replaceString",
+        "title": "VKS: Replace String",
+        "data": {
+          "type": "string",
+          "action": "replace"
+        }
+      },
+      {
+        "command": "vks.selectBlock",
+        "title": "VKS: Select Block",
+        "data": {
+          "type": "block",
+          "action": "select"
+        }
+      },
+      {
+        "command": "vks.deleteBlock",
+        "title": "VKS: Delete Block",
+        "data": {
+          "type": "block",
+          "action": "delete"
+        }
+      },
+      {
+        "command": "vks.cutBlock",
+        "title": "VKS: Cut Block",
+        "data": {
+          "type": "block",
+          "action": "cut"
+        }
+      },
+      {
+        "command": "vks.copyBlock",
+        "title": "VKS: Copy Block",
+        "data": {
+          "type": "block",
+          "action": "copy"
+        }
+      },
+      {
+        "command": "vks.selectInnerBlock",
+        "title": "VKS: Select Inner Block",
+        "data": {
+          "type": "inner_block",
+          "action": "select"
+        }
+      },
+      {
+        "command": "vks.copyInnerBlock",
+        "title": "VKS: Copy Inner Block",
+        "data": {
+          "type": "inner_block",
+          "action": "copy"
+        }
+      },
+      {
+        "command": "vks.selectItem",
+        "title": "VKS: Select Item",
+        "data": {
+          "type": "item",
+          "action": "select"
+        }
+      },
+      {
+        "command": "vks.deleteItem",
+        "title": "VKS: Delete Item",
+        "data": {
+          "type": "item",
+          "action": "delete"
+        }
+      },
+      {
+        "command": "vks.cutItem",
+        "title": "VKS: Cut Item",
+        "data": {
+          "type": "item",
+          "action": "cut"
+        }
+      },
+      {
+        "command": "vks.copyItem",
+        "title": "VKS: Copy Item",
+        "data": {
+          "type": "item",
+          "action": "copy"
+        }
+      },
+      {
+        "command": "vks.replaceItem",
+        "title": "VKS: Replace Item",
+        "data": {
+          "type": "item",
+          "action": "replace"
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "npm run compile && node ./node_modules/vscode/bin/test",
+    "updateAndInstall": "npm run bumpVersion && npm run createVsix && npm run installVsix",
+    "bumpVersion": "npm --no-git-tag-version version patch",
+    "createVsix": "vsce package --out vsix/$npm_package_name-$npm_package_version.vsix",
+    "installVsix": "code --install-extension vsix/$npm_package_name-$npm_package_version.vsix"
+  },
+  "devDependencies": {
+    "@types/clipboardy": "^1.1.0",
+    "@types/lodash": "^4.14.120",
+    "@types/mocha": "^2.2.42",
+    "@types/node": "^8.10.25",
+    "typescript": "^3.1.4",
+    "vscode": "^1.1.25"
+  },
+  "dependencies": {
+    "@babel/parser": "^7.2.3",
+    "@babel/types": "^7.2.2",
+    "clipboardy": "^1.2.3",
+    "json-to-ast": "^2.1.0",
+    "lodash": "^4.17.11"
+  }
 }
